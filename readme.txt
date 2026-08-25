@@ -1,5 +1,5 @@
 === Weight-Based Product Packs for WooCommerce ===
-Contributors: Ali Atashinbar
+Contributors: atashinbar
 Tags: woocommerce, pack, weight, mix and match, box builder
 Requires at least: 6.4
 Tested up to: 7.1
