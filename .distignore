@@ -4,5 +4,6 @@
 .gitignore
 .gitattributes
 .distignore
+.wordpress-org
 README.md
 .DS_Store

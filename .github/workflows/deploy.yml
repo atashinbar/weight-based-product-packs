@@ -20,3 +20,4 @@ jobs:
           SVN_USERNAME: ${{ secrets.WPORG_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SLUG: weight-based-product-packs
+          ASSETS_DIR: .wordpress-org

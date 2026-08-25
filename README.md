@@ -1,5 +1,7 @@
 # Weight-Based Product Packs for WooCommerce
 
+<p align="left"><img src=".wordpress-org/icon-256x256.png" width="96" alt="Weight-Based Product Packs icon" /></p>
+
 Let customers fill weight-based packs (e.g. 1 kg boxes) with pre-defined weight bundles. A pack can only be purchased when its total weight **exactly matches its capacity** — perfect for nuts & dried fruit stores, candy shops, tea blends, or any store that packs goods into pre-ordered boxes.
 
 ## How it works
