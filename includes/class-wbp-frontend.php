@@ -81,6 +81,55 @@ class WBP_Frontend {
 	}
 
 	/**
+	 * Sibling packs sharing the same source category (e.g. 1/2/5 kg sizes),
+	 * sorted by capacity. Used by the pack-size switcher.
+	 *
+	 * @param WBP_Product_Pack $pack
+	 * @return array[] Array of [id, capacity_g, url, is_current].
+	 */
+	public static function get_pack_sizes( $pack ) {
+		if ( ! $pack instanceof WBP_Product_Pack ) {
+			return array();
+		}
+		$cat = $pack->get_source_cat();
+		if ( ! $cat ) {
+			return array();
+		}
+
+		$sizes   = array();
+		$packs = wc_get_products(
+			array(
+				'type'   => 'pack',
+				'status' => 'publish',
+				'limit'  => -1,
+			)
+		);
+
+		foreach ( $packs as $p ) {
+			/** @var WBP_Product_Pack $p */
+			$capacity = $p->get_capacity_g();
+			if ( $capacity <= 0 || (int) $p->get_source_cat() !== (int) $cat ) {
+				continue;
+			}
+			$sizes[] = array(
+				'id'         => $p->get_id(),
+				'capacity_g' => $capacity,
+				'url'        => $p->get_permalink(),
+				'is_current' => $p->get_id() === $pack->get_id(),
+			);
+		}
+
+		usort(
+			$sizes,
+			function ( $a, $b ) {
+				return $a['capacity_g'] - $b['capacity_g'];
+			}
+		);
+
+		return $sizes;
+	}
+
+	/**
 	 * Render the pack builder (replaces the default add-to-cart form).
 	 */
 	public static function render_builder() {
@@ -89,15 +138,31 @@ class WBP_Frontend {
 			return;
 		}
 
-		$bundles  = WBP_Items::get_for_pack( $product );
-		$problems = WBP_Items::config_problems( $product );
+		$bundles = WBP_Items::get_for_pack( $product );
+
+		// Group bundles by parent product (one card per nut with weight rows).
+		$groups = array();
+		foreach ( $bundles as $b ) {
+			$pid = $b['parent_id'];
+			if ( ! isset( $groups[ $pid ] ) ) {
+				$groups[ $pid ] = array(
+					'parent_id' => $pid,
+					'name'      => $b['parent_name'],
+					'image_url' => $b['parent_image'],
+					'rows'      => array(),
+				);
+			}
+			$groups[ $pid ]['rows'][] = $b;
+		}
 
 		wc_get_template(
 			'single-product/add-to-cart/pack-builder.php',
 			array(
 				'product'  => $product,
 				'bundles'  => $bundles,
-				'problems' => $problems,
+				'groups'   => array_values( $groups ),
+				'sizes'    => self::get_pack_sizes( $product ),
+				'problems' => WBP_Items::config_problems( $product ),
 			),
 			'',
 			WBP_DIR . 'templates/'

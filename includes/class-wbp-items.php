@@ -210,25 +210,30 @@ class WBP_Items {
 			return null;
 		}
 
-		// Name: variations append their attribute summary to the parent name.
-		$name = $parent->get_name();
+		// Name: variations append their attribute values to the parent name.
+		$name       = $parent->get_name();
+		$attr_label = '';
 		if ( $item->get_id() !== $parent->get_id() ) {
-			$attrs = wc_get_formatted_variation( $item, true, true, true );
-			$name  = $attrs ? $name . ' — ' . $attrs : $name;
+			$attr_label = wc_get_formatted_variation( $item, true, false, false );
+			$name       = $attr_label ? $name . ' — ' . $attr_label : $name;
 		}
 
 		$image_id = $item->get_image_id() ? $item->get_image_id() : $parent->get_image_id();
+		$parent_image_id = $parent->get_image_id();
 
 		return array(
-			'id'         => $item->get_id(),
-			'parent_id'  => $parent->get_id(),
-			'name'       => $name,
-			'weight_g'   => $weight_g,
-			'price'      => $price,
-			'price_html' => wc_price( $price ),
-			'stock'      => $stock,
-			'image_url'  => $image_id ? wp_get_attachment_image_url( $image_id, 'woocommerce_thumbnail' ) : wc_placeholder_img_src( 'woocommerce_thumbnail' ),
-			'permalink'  => $parent->get_permalink(),
+			'id'             => $item->get_id(),
+			'parent_id'      => $parent->get_id(),
+			'name'           => $name,
+			'attr_label'     => $attr_label,
+			'parent_name'    => $parent->get_name(),
+			'parent_image'   => $parent_image_id ? wp_get_attachment_image_url( $parent_image_id, 'woocommerce_thumbnail' ) : wc_placeholder_img_src( 'woocommerce_thumbnail' ),
+			'weight_g'       => $weight_g,
+			'price'          => $price,
+			'price_html'     => wc_price( $price ),
+			'stock'          => $stock,
+			'image_url'      => $image_id ? wp_get_attachment_image_url( $image_id, 'woocommerce_thumbnail' ) : wc_placeholder_img_src( 'woocommerce_thumbnail' ),
+			'permalink'      => $parent->get_permalink(),
 		);
 	}
 

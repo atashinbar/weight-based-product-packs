@@ -156,6 +156,9 @@ msgstr "ساخت پک"
 msgid "No items are currently available for this pack."
 msgstr "در حال حاضر قلم قابل انتخابی برای این پک وجود ندارد."
 
+msgid "Pack size"
+msgstr "سایز پک"
+
 msgid "Decrease quantity"
 msgstr "کم کردن"
 

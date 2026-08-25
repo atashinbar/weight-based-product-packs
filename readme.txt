@@ -20,7 +20,9 @@ The customer picks a pack, then fills it with the weight bundles you define (e.g
 
 * New "Weight-Based Pack" product type with any capacity (grams)
 * Fill packs with weight bundles (simple products or product variations)
-* Weight progress bar and live price calculation on the product page
+* Pack-size switcher when sibling packs (e.g. 1/2/5 kg) share the same items category
+* Grouped cards: one card per item with its weight/grade variations inside
+* Weight progress bar, live price calculation and a visual box preview on the product page
 * Price = sum of bundle prices + optional fixed box cost
 * Server-side validation: under-filled and over-filled packs are rejected
 * Stock is reduced automatically after payment and restored on cancellation

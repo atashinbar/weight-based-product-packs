@@ -1,7 +1,8 @@
 /**
  * Weight-based pack builder — client-side logic:
  *  - Per-bundle quantity steppers capped by remaining capacity and stock
- *  - Weight progress bar + live price
+ *  - Grouped cards (one per item, weight rows inside), per-group weight totals
+ *  - Weight progress bar, live price and a visual box preview
  *  - The add button is only enabled when the total weight exactly matches the capacity
  */
 (function () {
@@ -30,6 +31,9 @@
 	var elHint = root.querySelector('.wbp-hint');
 	var elAdd = root.querySelector('.wbp-add');
 	var addLabel = elAdd ? elAdd.textContent : '';
+	var elPreview = root.querySelector('.wbp-preview');
+	var elPreviewFill = root.querySelector('.wbp-preview-fill');
+	var elPreviewText = root.querySelector('.wbp-preview-text');
 
 	/* ------------------------------ formatting ------------------------------ */
 
@@ -93,15 +97,15 @@
 		var capacity = wbpData.capacity;
 		var remaining = capacity - t.grams;
 
-		// Counters and stepper buttons.
-		root.querySelectorAll('.wbp-item').forEach(function (card) {
-			var id = card.getAttribute('data-id');
+		// Rows and stepper buttons.
+		root.querySelectorAll('.wbp-row').forEach(function (row) {
+			var id = row.getAttribute('data-id');
 			var it = items[id];
 			var c = totalCount(id);
-			card.querySelector('.wbp-count').textContent = faNum(c);
+			row.querySelector('.wbp-count').textContent = faNum(c);
 
-			var minus = card.querySelector('.wbp-minus');
-			var plus = card.querySelector('.wbp-plus');
+			var minus = row.querySelector('.wbp-minus');
+			var plus = row.querySelector('.wbp-plus');
 
 			minus.disabled = c <= 0;
 			var plusBlocked = false;
@@ -116,7 +120,23 @@
 				}
 			}
 			plus.disabled = plusBlocked;
-			card.classList.toggle('is-active', c > 0);
+			row.classList.toggle('is-active', c > 0);
+		});
+
+		// Per-group weight totals.
+		root.querySelectorAll('.wbp-group').forEach(function (group) {
+			var groupGrams = 0;
+			group.querySelectorAll('.wbp-row').forEach(function (row) {
+				var id = row.getAttribute('data-id');
+				var it = items[id];
+				if (it) {
+					groupGrams += it.weight * totalCount(id);
+				}
+			});
+			var elTotal = group.querySelector('.wbp-group-total');
+			if (elTotal) {
+				elTotal.textContent = groupGrams > 0 ? faNum(groupGrams) + ' ' + wbpData.i18n.grams : '';
+			}
 		});
 
 		// Progress bar.
@@ -132,6 +152,18 @@
 		root.classList.toggle('is-partial', t.grams > 0 && remaining > 0);
 		root.classList.toggle('is-full', remaining === 0 && t.grams > 0);
 		root.classList.toggle('is-over', remaining < 0);
+
+		// Visual box preview.
+		if (elPreviewFill) {
+			elPreviewFill.style.height = pct + '%';
+		}
+		if (elPreviewText) {
+			elPreviewText.textContent = faNum(Math.round(pct)) + '%';
+		}
+		if (elPreview) {
+			elPreview.classList.toggle('is-full', remaining === 0 && t.grams > 0);
+			elPreview.classList.toggle('is-over', remaining < 0);
+		}
 
 		// Hint text.
 		var hint = '';
@@ -171,8 +203,8 @@
 		var minus = e.target.closest('.wbp-minus');
 
 		if (plus) {
-			var card1 = plus.closest('.wbp-item');
-			var id1 = card1.getAttribute('data-id');
+			var row1 = plus.closest('.wbp-row');
+			var id1 = row1.getAttribute('data-id');
 			var it1 = items[id1];
 			var t1 = totals();
 			if (it1 && t1.grams + it1.weight <= wbpData.capacity) {
@@ -185,8 +217,8 @@
 		}
 
 		if (minus) {
-			var card2 = minus.closest('.wbp-item');
-			var id2 = card2.getAttribute('data-id');
+			var row2 = minus.closest('.wbp-row');
+			var id2 = row2.getAttribute('data-id');
 			if (counts[id2] > 0) {
 				counts[id2]--;
 			}

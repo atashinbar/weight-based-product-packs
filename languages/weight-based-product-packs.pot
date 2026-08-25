@@ -154,6 +154,9 @@ msgstr ""
 msgid "No items are currently available for this pack."
 msgstr ""
 
+msgid "Pack size"
+msgstr ""
+
 msgid "Decrease quantity"
 msgstr ""
 

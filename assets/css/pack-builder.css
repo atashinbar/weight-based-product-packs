@@ -6,6 +6,48 @@
 	margin-block: 1.5em;
 }
 
+/* ------------------------------ size switcher ------------------------------ */
+
+.wbp-switcher {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 1.25em;
+}
+
+.wbp-switcher-label {
+	font-size: 0.9em;
+	font-weight: 600;
+	color: #555;
+	margin-inline-end: 4px;
+}
+
+.wbp-size {
+	display: inline-block;
+	padding: 8px 18px;
+	border: 1px solid #d8d8e0;
+	border-radius: 999px;
+	background: #fff;
+	color: #3c3c46;
+	font-size: 0.95em;
+	font-weight: 600;
+	text-decoration: none;
+	transition: all 0.15s ease;
+}
+
+a.wbp-size:hover {
+	border-color: #7f54b3;
+	color: #7f54b3;
+}
+
+.wbp-size.is-current {
+	background: #7f54b3;
+	border-color: #7f54b3;
+	color: #fff;
+	cursor: default;
+}
+
 /* ------------------------------ progress bar ------------------------------ */
 
 .wbp-progress {
@@ -53,58 +95,91 @@
 	font-weight: 600;
 }
 
-/* ------------------------------ bundle grid ------------------------------ */
+/* ------------------------------ grouped item cards ------------------------------ */
 
-.wbp-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+.wbp-groups {
+	display: flex;
+	flex-direction: column;
 	gap: 14px;
 }
 
-.wbp-item {
+.wbp-group {
 	border: 1px solid #e2e2e2;
-	border-radius: 10px;
-	padding: 14px 10px;
-	text-align: center;
+	border-radius: 12px;
 	background: #fff;
-	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	overflow: hidden;
 }
 
-.wbp-item.is-active {
-	border-color: #46b450;
-	box-shadow: inset 0 0 0 1px #46b450;
+.wbp-group-head {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 16px;
+	background: #fafafc;
+	border-bottom: 1px solid #ececf2;
 }
 
-.wbp-item-image {
-	width: 72px;
-	height: 72px;
+.wbp-group-image {
+	width: 44px;
+	height: 44px;
 	object-fit: cover;
 	border-radius: 8px;
-	margin-bottom: 8px;
+	flex: none;
 }
 
-.wbp-item-name {
-	font-weight: 600;
-	font-size: 0.95em;
-	margin-bottom: 4px;
-	line-height: 1.6;
-}
-
-.wbp-item-meta {
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-	font-size: 0.85em;
-	color: #666;
-	margin-bottom: 10px;
-}
-
-.wbp-item-price {
+.wbp-group-name {
+	font-weight: 700;
+	font-size: 1em;
 	color: #222;
-	font-weight: 600;
+	flex: 1 1 auto;
 }
 
-.wbp-item-price .woocommerce-Price-currencySymbol {
+.wbp-group-total {
+	font-size: 0.85em;
+	font-weight: 600;
+	color: #7f54b3;
+	background: #f4effb;
+	padding: 4px 10px;
+	border-radius: 999px;
+	white-space: nowrap;
+}
+
+.wbp-group-total:empty {
+	display: none;
+}
+
+.wbp-row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 16px;
+	border-bottom: 1px solid #f2f2f6;
+	transition: background-color 0.15s ease;
+}
+
+.wbp-row:last-child {
+	border-bottom: 0;
+}
+
+.wbp-row.is-active {
+	background: #fdfbf5;
+}
+
+.wbp-row-label {
+	flex: 1 1 auto;
+	font-size: 0.95em;
+	color: #333;
+	min-width: 0;
+}
+
+.wbp-row-price {
+	font-size: 0.9em;
+	font-weight: 600;
+	color: #222;
+	white-space: nowrap;
+}
+
+.wbp-row-price .woocommerce-Price-currencySymbol {
 	font-size: 0.85em;
 }
 
@@ -117,11 +192,12 @@
 	border: 1px solid #dcdcdc;
 	border-radius: 8px;
 	overflow: hidden;
+	flex: none;
 }
 
 .wbp-step {
-	width: 38px;
-	height: 38px;
+	width: 36px;
+	height: 36px;
 	border: 0;
 	background: #f6f6f6;
 	font-size: 18px;
@@ -142,20 +218,28 @@
 }
 
 .wbp-count {
-	min-width: 44px;
+	min-width: 40px;
 	text-align: center;
 	font-weight: 700;
 	font-variant-numeric: tabular-nums;
 }
 
-/* ------------------------------ summary ------------------------------ */
+/* ------------------------------ summary + box preview ------------------------------ */
 
 .wbp-summary {
 	margin-top: 1.5em;
 	padding: 16px;
 	border: 1px solid #e2e2e2;
-	border-radius: 10px;
+	border-radius: 12px;
 	background: #fafafa;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 16px;
+}
+
+.wbp-summary-main {
+	flex: 1 1 260px;
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
@@ -168,7 +252,7 @@
 }
 
 .wbp-hint {
-	flex: 1 1 200px;
+	flex: 1 1 180px;
 	color: #666;
 	font-size: 0.9em;
 }
@@ -192,18 +276,84 @@ button.wbp-add:disabled {
 	cursor: not-allowed;
 }
 
+/* the visual box preview */
+.wbp-preview {
+	position: relative;
+	width: 96px;
+	height: 96px;
+	flex: none;
+	border: 3px solid #b99bd9;
+	border-radius: 12px;
+	background: #fff;
+	overflow: hidden;
+	box-shadow: inset 0 0 0 1px #e9dff6;
+}
+
+.wbp-preview-fill {
+	position: absolute;
+	inset-inline: 0;
+	bottom: 0;
+	height: 0;
+	background: linear-gradient(180deg, #f3c46f, #f0ad4e);
+	transition: height 0.3s ease, background-color 0.3s ease;
+}
+
+.wbp-preview.is-full .wbp-preview-fill {
+	background: linear-gradient(180deg, #63c175, #46b450);
+}
+
+.wbp-preview.is-over .wbp-preview-fill {
+	background: linear-gradient(180deg, #e07679, #d63638);
+}
+
+.wbp-preview-text {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.05em;
+	font-weight: 700;
+	color: #4e3572;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.wbp-preview.is-full .wbp-preview-text {
+	color: #1d5c28;
+}
+
+.wbp-preview.is-over .wbp-preview-text {
+	color: #7a1d1f;
+}
+
 /* ------------------------------ mobile ------------------------------ */
 
 @media (max-width: 480px) {
-	.wbp-grid {
-		grid-template-columns: repeat(2, 1fr);
-		gap: 10px;
+	.wbp-group-head {
+		flex-wrap: wrap;
+	}
+
+	.wbp-row {
+		flex-wrap: wrap;
+	}
+
+	.wbp-row-label {
+		flex-basis: 100%;
+		order: -1;
 	}
 
 	.wbp-summary {
-		flex-direction: column;
+		flex-direction: column-reverse;
 		align-items: stretch;
 		text-align: center;
+	}
+
+	.wbp-summary-main {
+		flex-direction: column;
+	}
+
+	.wbp-preview {
+		margin-inline: auto;
 	}
 
 	button.wbp-add {
