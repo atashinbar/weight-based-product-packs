@@ -1,0 +1,22 @@
+name: Deploy to WordPress.org
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  deploy:
+    name: New release tag
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: WordPress Plugin Deploy
+        uses: 10up/wp-plugin-action@stable
+        with:
+          actions: deploy
+          username: ${{ secrets.WPORG_USERNAME }}
+          password: ${{ secrets.SVN_PASSWORD }}

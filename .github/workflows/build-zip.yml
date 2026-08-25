@@ -1,0 +1,19 @@
+name: Build plugin zip
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  zip:
+    name: Generate installable zip artifact
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate plugin zip
+        uses: 10up/wp-plugin-action@stable
+        with:
+          actions: zip

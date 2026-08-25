@@ -1,0 +1,6 @@
+# Exclude non-plugin files from GitHub-generated archives (e.g. "Download ZIP").
+.github export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+.distignore export-ignore
+README.md export-ignore

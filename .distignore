@@ -1,0 +1,8 @@
+# Files excluded from the WordPress.org SVN deploy and generated zip.
+.github
+.git
+.gitignore
+.gitattributes
+.distignore
+README.md
+.DS_Store

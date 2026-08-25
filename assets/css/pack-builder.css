@@ -1,0 +1,213 @@
+/*
+ * Weight-based pack builder — responsive styles (RTL-safe via logical properties).
+ */
+
+.wbp-builder {
+	margin-block: 1.5em;
+}
+
+/* ------------------------------ progress bar ------------------------------ */
+
+.wbp-progress {
+	margin-bottom: 1.25em;
+}
+
+.wbp-progress-bar {
+	background: #f0f0f1;
+	border-radius: 999px;
+	height: 14px;
+	overflow: hidden;
+}
+
+.wbp-progress-fill {
+	display: block;
+	height: 100%;
+	width: 0;
+	background: #f0ad4e; /* amber: partially filled */
+	border-radius: 999px;
+	transition: width 0.25s ease, background-color 0.25s ease;
+}
+
+.wbp-builder.is-full .wbp-progress-fill {
+	background: #46b450; /* green: pack is full */
+}
+
+.wbp-builder.is-over .wbp-progress-fill {
+	background: #d63638; /* red: over capacity */
+}
+
+.wbp-progress-text {
+	margin-top: 0.4em;
+	font-size: 0.95em;
+	color: #555;
+	text-align: start;
+}
+
+.wbp-progress-text .wbp-current {
+	font-weight: 700;
+	color: #222;
+}
+
+.wbp-builder.is-full .wbp-progress-text {
+	color: #2e7d32;
+	font-weight: 600;
+}
+
+/* ------------------------------ bundle grid ------------------------------ */
+
+.wbp-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+	gap: 14px;
+}
+
+.wbp-item {
+	border: 1px solid #e2e2e2;
+	border-radius: 10px;
+	padding: 14px 10px;
+	text-align: center;
+	background: #fff;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.wbp-item.is-active {
+	border-color: #46b450;
+	box-shadow: inset 0 0 0 1px #46b450;
+}
+
+.wbp-item-image {
+	width: 72px;
+	height: 72px;
+	object-fit: cover;
+	border-radius: 8px;
+	margin-bottom: 8px;
+}
+
+.wbp-item-name {
+	font-weight: 600;
+	font-size: 0.95em;
+	margin-bottom: 4px;
+	line-height: 1.6;
+}
+
+.wbp-item-meta {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	font-size: 0.85em;
+	color: #666;
+	margin-bottom: 10px;
+}
+
+.wbp-item-price {
+	color: #222;
+	font-weight: 600;
+}
+
+.wbp-item-price .woocommerce-Price-currencySymbol {
+	font-size: 0.85em;
+}
+
+/* ------------------------------ stepper ------------------------------ */
+
+.wbp-stepper {
+	display: inline-flex;
+	align-items: center;
+	gap: 0;
+	border: 1px solid #dcdcdc;
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.wbp-step {
+	width: 38px;
+	height: 38px;
+	border: 0;
+	background: #f6f6f6;
+	font-size: 18px;
+	line-height: 1;
+	cursor: pointer;
+	color: #222;
+	padding: 0;
+	transition: background-color 0.15s ease;
+}
+
+.wbp-step:hover:not(:disabled) {
+	background: #eaeaea;
+}
+
+.wbp-step:disabled {
+	opacity: 0.35;
+	cursor: not-allowed;
+}
+
+.wbp-count {
+	min-width: 44px;
+	text-align: center;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------ summary ------------------------------ */
+
+.wbp-summary {
+	margin-top: 1.5em;
+	padding: 16px;
+	border: 1px solid #e2e2e2;
+	border-radius: 10px;
+	background: #fafafa;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+}
+
+.wbp-total-price {
+	font-weight: 700;
+	font-size: 1.1em;
+}
+
+.wbp-hint {
+	flex: 1 1 200px;
+	color: #666;
+	font-size: 0.9em;
+}
+
+.wbp-builder.is-full .wbp-hint {
+	color: #2e7d32;
+	font-weight: 600;
+}
+
+.wbp-hint.has-error {
+	color: #d63638;
+	font-weight: 600;
+}
+
+button.wbp-add {
+	margin-inline-start: auto;
+}
+
+button.wbp-add:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* ------------------------------ mobile ------------------------------ */
+
+@media (max-width: 480px) {
+	.wbp-grid {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 10px;
+	}
+
+	.wbp-summary {
+		flex-direction: column;
+		align-items: stretch;
+		text-align: center;
+	}
+
+	button.wbp-add {
+		margin-inline-start: 0;
+		width: 100%;
+	}
+}

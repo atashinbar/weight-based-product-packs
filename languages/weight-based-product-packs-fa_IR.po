@@ -1,0 +1,169 @@
+# Persian translation for Weight-Based Product Packs for WooCommerce.
+# Copyright (C) 2026
+# This file is distributed under the GPL-2.0-or-later license.
+msgid ""
+msgstr ""
+"Project-Id-Version: Weight-Based Product Packs for WooCommerce 1.0.0\n"
+"Report-Msgid-Bugs-To: https://example.com/\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: fa_IR\n"
+"Plural-Forms: nplurals=2; plural=(n==0 ? 0 : 1);\n"
+"X-Domain: weight-based-product-packs\n"
+
+#: weight-based-product-packs.php
+msgid "Weight-Based Product Packs requires WooCommerce to be installed and activated."
+msgstr "افزونه «پک وزنی» نیازمند نصب و فعال‌سازی ووکامرس است."
+
+#: includes/class-wbp-product-pack.php
+msgid "Weight-Based Pack"
+msgstr "پک وزنی"
+
+msgid "Final price is calculated based on the selected contents."
+msgstr "قیمت نهایی به‌ازای محتوای انتخابی محاسبه می‌شود."
+
+#: includes/class-wbp-items.php
+msgid "%s kg"
+msgstr "%s کیلوگرم"
+
+msgid "%s g"
+msgstr "%s گرم"
+
+msgid "Pack capacity (grams) is not set."
+msgstr "ظرفیت پک (گرم) تعیین نشده است."
+
+msgid "The allowed items category is not selected."
+msgstr "دسته‌بندی اقلام مجاز انتخاب نشده است."
+
+msgid "No valid weight bundles were found in the selected category. Every item needs a weight and stock."
+msgstr "هیچ بسته وزنی معتبری در دسته‌بندی انتخابی یافت نشد. هر قلم باید وزن و موجودی داشته باشد."
+
+msgid "No combination of the current bundle weights can fill the %s g capacity exactly; adjust the weights or the capacity."
+msgstr "هیچ ترکیبی از وزن بسته‌های فعلی نمی‌تواند ظرفیت %s گرمی را دقیقاً پر کند؛ وزن‌ها یا ظرفیت را اصلاح کنید."
+
+#: includes/class-wbp-admin.php
+msgid "Pack Settings"
+msgstr "تنظیمات پک"
+
+#: includes/admin/views/pack-panel.php
+msgid "Pack capacity (grams)"
+msgstr "ظرفیت پک (گرم)"
+
+msgid "The total weight of the bundles inside the pack must equal this number exactly; e.g. enter 1000 for a 1 kg box."
+msgstr "جمع وزن بسته‌های داخل پک باید دقیقاً با این عدد برابر شود؛ مثلاً برای کارتن ۱ کیلویی عدد ۱۰۰۰ را وارد کنید."
+
+msgid "Box cost (optional)"
+msgstr "هزینه کارتن (اختیاری)"
+
+msgid "A fixed amount added to the total price of the pack contents; the cost of the box itself."
+msgstr "مبلغ ثابتی که به جمع قیمت محتوای پک اضافه می‌شود؛ هزینه بسته‌بندی خود کارتن."
+
+msgid "Allowed items category"
+msgstr "دسته‌بندی اقلام مجاز"
+
+msgid "— Select a category —"
+msgstr "— انتخاب دسته‌بندی —"
+
+msgid "Simple products and variations of variable products in this category appear as selectable bundles on the pack builder page. Every item must have a weight and, when stock management is enabled, stock."
+msgstr "محصولات ساده و واریشن‌های محصولات متغیرِ این دسته به‌عنوان بسته‌های قابل انتخاب به صفحه ساخت پک اضافه می‌شوند. هر قلم باید «وزن» و در صورت فعال بودن مدیریت موجودی، موجودی داشته باشد."
+
+msgid "Excluded IDs (optional)"
+msgstr "شناسه‌های مستثنا (اختیاری)"
+
+msgid "Comma-separated product or variation IDs that should not be shown in this pack."
+msgstr "شناسه محصولات یا واریشن‌هایی که نباید در این پک نمایش داده شوند، با ویرگول جدا کنید."
+
+msgid "Tip: for the pack to be fillable exactly, the bundle weights must be able to build multiples of the pack capacity; e.g. 100 g, 200 g and 500 g bundles are ideal for a 1000 g pack."
+msgstr "راهنما: برای اینکه مشتری بتواند پک را دقیقاً پر کند، وزن بسته‌ها باید بتوانند مضربی از ظرفیت پک را بسازند؛ مثلاً بسته‌های ۱۰۰ و ۲۰۰ و ۵۰۰ گرمی برای پک ۱۰۰۰ گرمی ایده‌آل‌اند."
+
+#: includes/class-wbp-cart.php
+msgid "Pack not found."
+msgstr "پک موردنظر یافت نشد."
+
+msgid "This pack is not configured correctly."
+msgstr "این پک به‌درستی تنظیم نشده است."
+
+msgid "Choose the pack contents before purchasing."
+msgstr "برای خرید پک، ابتدا محتوای آن را انتخاب کنید."
+
+msgid "The pack is not full yet; %s g remaining."
+msgstr "پک کامل نشده است؛ %s گرم باقی مانده."
+
+msgid "The pack is over capacity by %s g; remove some items."
+msgstr "ظرفیت پک %s گرم اضافه شده است؛ برخی اقلام را کم کنید."
+
+msgid "Insufficient stock for \"%1$s\" (current stock: %2$s)."
+msgstr "موجودی «%1$s» کافی نیست (موجودی فعلی: %2$s)."
+
+msgid "Could not add the pack to the cart."
+msgstr "افزودن پک به سبد خرید ناموفق بود."
+
+msgid "Pack added to the cart successfully."
+msgstr "پک با موفقیت به سبد خرید اضافه شد."
+
+msgid "To purchase this pack, please select its contents on the product page first."
+msgstr "برای خرید این پک، ابتدا از صفحه محصول محتوای آن را انتخاب کنید."
+
+msgid "Pack total weight"
+msgstr "جمع وزن پک"
+
+msgid "A pack without contents is in your cart; please remove it and build it again from the product page."
+msgstr "پکی بدون محتوا در سبد خرید وجود دارد؛ آن را حذف کنید و از صفحه محصول دوباره بسازید."
+
+msgid "One of the packs in your cart is invalid; please remove it and build it again from the product page."
+msgstr "یکی از پک‌های سبد خرید معتبر نیست؛ لطفاً آن را حذف و از صفحه محصول دوباره بسازید."
+
+msgid "Insufficient stock for \"%1$s\" for this order (current stock: %2$s)."
+msgstr "موجودی «%1$s» برای این سفارش کافی نیست (موجودی فعلی: %2$s)."
+
+#: includes/class-wbp-order.php
+msgid "%1$s × %2$s (%3$s)"
+msgstr "%1$s عدد × %2$s (%3$s)"
+
+msgid "Weight-based pack: reduced \"%2$s\" stock by %1$s."
+msgstr "پک وزنی: %1$s واحد از موجودی «%2$s» کسر شد."
+
+msgid "Weight-based pack: stock restored for this order."
+msgstr "پک وزنی: موجودی بسته‌های این سفارش بازگردانده شد."
+
+#: includes/class-wbp-frontend.php
+msgid "%s g remaining"
+msgstr "%s گرم باقی مانده"
+
+msgid "%s g over capacity; remove some items"
+msgstr "%s گرم اضافه است؛ برخی اقلام را کم کنید"
+
+msgid "Pack is full ✓"
+msgstr "پک کامل شد ✓"
+
+msgid "Select bundles to start filling the pack"
+msgstr "برای شروع، تعداد بسته‌های دلخواه را انتخاب کنید"
+
+msgid "Adding…"
+msgstr "در حال افزودن…"
+
+msgid "Server communication error; please try again."
+msgstr "خطا در ارتباط با سرور؛ دوباره تلاش کنید."
+
+msgid "Box cost"
+msgstr "هزینه بسته‌بندی"
+
+msgid "Build pack"
+msgstr "ساخت پک"
+
+#: templates/single-product/add-to-cart/pack-builder.php
+msgid "No items are currently available for this pack."
+msgstr "در حال حاضر قلم قابل انتخابی برای این پک وجود ندارد."
+
+msgid "Decrease quantity"
+msgstr "کم کردن"
+
+msgid "Increase quantity"
+msgstr "بیشتر"
+
+msgid "Add pack to cart"
+msgstr "افزودن پک به سبد خرید"
+
+msgid "g"
+msgstr "گرم"
