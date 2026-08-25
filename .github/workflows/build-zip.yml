@@ -13,5 +13,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build plugin zip
-        uses: 10up/action-wordpress-plugin-build-zip@stable
+      # Simple zip build that works before the plugin is approved on WordPress.org
+      # (the 10up zip action requires an existing SVN repository).
+      - name: Build zip (respecting .distignore)
+        run: |
+          mkdir -p /tmp/package/weight-based-product-packs
+          rsync -r --exclude-from=.distignore ./ /tmp/package/weight-based-product-packs/
+          cd /tmp/package && zip -rq weight-based-product-packs.zip weight-based-product-packs
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: weight-based-product-packs
+          path: /tmp/package/weight-based-product-packs.zip
