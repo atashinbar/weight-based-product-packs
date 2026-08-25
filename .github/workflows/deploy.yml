@@ -15,8 +15,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: WordPress Plugin Deploy
-        uses: 10up/wp-plugin-action@stable
-        with:
-          actions: deploy
-          username: ${{ secrets.WPORG_USERNAME }}
-          password: ${{ secrets.SVN_PASSWORD }}
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        env:
+          SVN_USERNAME: ${{ secrets.WPORG_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: weight-based-product-packs

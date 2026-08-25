@@ -13,7 +13,5 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Generate plugin zip
-        uses: 10up/wp-plugin-action@stable
-        with:
-          actions: zip
+      - name: Build plugin zip
+        uses: 10up/action-wordpress-plugin-build-zip@stable
