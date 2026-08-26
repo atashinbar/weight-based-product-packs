@@ -22,8 +22,18 @@
 		items[String(it.id)] = it;
 	});
 
+	/*
+	 * wp_localize_script casts top-level scalars to strings ("1000" instead
+	 * of 1000), which would break strict comparisons below — normalize once.
+	 */
+	wbpData.capacity = parseInt(wbpData.capacity, 10) || 0;
+	wbpData.packId = parseInt(wbpData.packId, 10) || 0;
+	wbpData.priceDecimals = parseInt(wbpData.priceDecimals, 10) || 0;
+	wbpData.boxCost = parseFloat(wbpData.boxCost) || 0;
+
 	var counts = {};
 	var pending = false;
+	var lastError = '';
 
 	var elFill = root.querySelector('.wbp-progress-fill');
 	var elCurrent = root.querySelector('.wbp-current');
@@ -165,20 +175,22 @@
 			elPreview.classList.toggle('is-over', remaining < 0);
 		}
 
-		// Hint text.
-		var hint = '';
-		if (t.grams === 0) {
-			hint = wbpData.i18n.empty;
-		} else if (remaining > 0) {
-			hint = fmt(wbpData.i18n.remaining, remaining);
-		} else if (remaining < 0) {
-			hint = fmt(wbpData.i18n.over, -remaining);
-		} else {
-			hint = wbpData.i18n.complete;
+		// Hint text (a pending error stays visible until the user changes something).
+		var hint = lastError;
+		if (!hint) {
+			if (t.grams === 0) {
+				hint = wbpData.i18n.empty;
+			} else if (remaining > 0) {
+				hint = fmt(wbpData.i18n.remaining, remaining);
+			} else if (remaining < 0) {
+				hint = fmt(wbpData.i18n.over, -remaining);
+			} else {
+				hint = wbpData.i18n.complete;
+			}
 		}
 		if (elHint) {
 			elHint.textContent = hint;
-			elHint.classList.toggle('has-error', remaining < 0);
+			elHint.classList.toggle('has-error', !!lastError || remaining < 0);
 		}
 
 		// Live price.
@@ -211,6 +223,7 @@
 				var nextCount = totalCount(id1) + 1;
 				if (it1.stock === null || nextCount <= it1.stock) {
 					counts[id1] = nextCount;
+					lastError = '';
 				}
 			}
 			render();
@@ -221,6 +234,7 @@
 			var id2 = row2.getAttribute('data-id');
 			if (counts[id2] > 0) {
 				counts[id2]--;
+				lastError = '';
 			}
 			render();
 		}
@@ -263,6 +277,7 @@
 						window.location = res.data.redirect;
 					} else {
 						pending = false;
+						lastError = (res && res.data && res.data.message) ? res.data.message : wbpData.i18n.error;
 						elAdd.textContent = addLabel;
 						if (elHint) {
 							elHint.textContent = (res && res.data && res.data.message) ? res.data.message : wbpData.i18n.error;
@@ -273,10 +288,7 @@
 				})
 				.catch(function () {
 					pending = false;
-					if (elHint) {
-						elHint.textContent = wbpData.i18n.error;
-						elHint.classList.add('has-error');
-					}
+					lastError = wbpData.i18n.error;
 					render();
 				});
 		});
