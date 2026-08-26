@@ -61,7 +61,15 @@ class WBP_Product_Pack extends WC_Product_Simple {
 
 	public static function init() {
 		add_filter( 'woocommerce_product_class', array( __CLASS__, 'map_product_class' ), 10, 4 );
+
+		/*
+		 * The product type dropdown uses the legacy `product_type_selector` filter
+		 * (see wc_get_product_types()); newer docs mention the `woocommerce_`-prefixed
+		 * form, so both are hooked for compatibility.
+		 */
+		add_filter( 'product_type_selector', array( __CLASS__, 'add_type_option' ) );
 		add_filter( 'woocommerce_product_type_selector', array( __CLASS__, 'add_type_option' ) );
+
 		add_filter( 'woocommerce_is_purchasable', array( __CLASS__, 'filter_is_purchasable' ), 10, 2 );
 		add_filter( 'woocommerce_get_price_html', array( __CLASS__, 'filter_price_html' ), 10, 2 );
 	}
