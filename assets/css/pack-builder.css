@@ -2,13 +2,13 @@
  * Weight-based pack builder — responsive styles (RTL-safe via logical properties).
  */
 
-.wbp-builder {
+.wbpp-builder {
 	margin-block: 1.5em;
 }
 
 /* ------------------------------ size switcher ------------------------------ */
 
-.wbp-switcher {
+.wbpp-switcher {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
@@ -16,14 +16,14 @@
 	margin-bottom: 1.25em;
 }
 
-.wbp-switcher-label {
+.wbpp-switcher-label {
 	font-size: 0.9em;
 	font-weight: 600;
 	color: #555;
 	margin-inline-end: 4px;
 }
 
-.wbp-size {
+.wbpp-size {
 	display: inline-block;
 	padding: 8px 18px;
 	border: 1px solid #d8d8e0;
@@ -36,12 +36,12 @@
 	transition: all 0.15s ease;
 }
 
-a.wbp-size:hover {
+a.wbpp-size:hover {
 	border-color: #7f54b3;
 	color: #7f54b3;
 }
 
-.wbp-size.is-current {
+.wbpp-size.is-current {
 	background: #7f54b3;
 	border-color: #7f54b3;
 	color: #fff;
@@ -50,18 +50,18 @@ a.wbp-size:hover {
 
 /* ------------------------------ progress bar ------------------------------ */
 
-.wbp-progress {
+.wbpp-progress {
 	margin-bottom: 1.25em;
 }
 
-.wbp-progress-bar {
+.wbpp-progress-bar {
 	background: #f0f0f1;
 	border-radius: 999px;
 	height: 14px;
 	overflow: hidden;
 }
 
-.wbp-progress-fill {
+.wbpp-progress-fill {
 	display: block;
 	height: 100%;
 	width: 0;
@@ -70,47 +70,47 @@ a.wbp-size:hover {
 	transition: width 0.25s ease, background-color 0.25s ease;
 }
 
-.wbp-builder.is-full .wbp-progress-fill {
+.wbpp-builder.is-full .wbpp-progress-fill {
 	background: #46b450; /* green: pack is full */
 }
 
-.wbp-builder.is-over .wbp-progress-fill {
+.wbpp-builder.is-over .wbpp-progress-fill {
 	background: #d63638; /* red: over capacity */
 }
 
-.wbp-progress-text {
+.wbpp-progress-text {
 	margin-top: 0.4em;
 	font-size: 0.95em;
 	color: #555;
 	text-align: start;
 }
 
-.wbp-progress-text .wbp-current {
+.wbpp-progress-text .wbpp-current {
 	font-weight: 700;
 	color: #222;
 }
 
-.wbp-builder.is-full .wbp-progress-text {
+.wbpp-builder.is-full .wbpp-progress-text {
 	color: #2e7d32;
 	font-weight: 600;
 }
 
 /* ------------------------------ grouped item cards ------------------------------ */
 
-.wbp-groups {
+.wbpp-groups {
 	display: flex;
 	flex-direction: column;
 	gap: 14px;
 }
 
-.wbp-group {
+.wbpp-group {
 	border: 1px solid #e2e2e2;
 	border-radius: 12px;
 	background: #fff;
 	overflow: hidden;
 }
 
-.wbp-group-head {
+.wbpp-group-head {
 	display: flex;
 	align-items: center;
 	gap: 12px;
@@ -119,7 +119,7 @@ a.wbp-size:hover {
 	border-bottom: 1px solid #ececf2;
 }
 
-.wbp-group-image {
+.wbpp-group-image {
 	width: 44px;
 	height: 44px;
 	object-fit: cover;
@@ -127,14 +127,14 @@ a.wbp-size:hover {
 	flex: none;
 }
 
-.wbp-group-name {
+.wbpp-group-name {
 	font-weight: 700;
 	font-size: 1em;
 	color: #222;
 	flex: 1 1 auto;
 }
 
-.wbp-group-total {
+.wbpp-group-total {
 	font-size: 0.85em;
 	font-weight: 600;
 	color: #7f54b3;
@@ -144,11 +144,11 @@ a.wbp-size:hover {
 	white-space: nowrap;
 }
 
-.wbp-group-total:empty {
+.wbpp-group-total:empty {
 	display: none;
 }
 
-.wbp-row {
+.wbpp-row {
 	display: flex;
 	align-items: center;
 	gap: 12px;
@@ -157,35 +157,35 @@ a.wbp-size:hover {
 	transition: background-color 0.15s ease;
 }
 
-.wbp-row:last-child {
+.wbpp-row:last-child {
 	border-bottom: 0;
 }
 
-.wbp-row.is-active {
+.wbpp-row.is-active {
 	background: #fdfbf5;
 }
 
-.wbp-row-label {
+.wbpp-row-label {
 	flex: 1 1 auto;
 	font-size: 0.95em;
 	color: #333;
 	min-width: 0;
 }
 
-.wbp-row-price {
+.wbpp-row-price {
 	font-size: 0.9em;
 	font-weight: 600;
 	color: #222;
 	white-space: nowrap;
 }
 
-.wbp-row-price .woocommerce-Price-currencySymbol {
+.wbpp-row-price .woocommerce-Price-currencySymbol {
 	font-size: 0.85em;
 }
 
 /* ------------------------------ stepper ------------------------------ */
 
-.wbp-stepper {
+.wbpp-stepper {
 	display: inline-flex;
 	align-items: center;
 	gap: 0;
@@ -195,7 +195,7 @@ a.wbp-size:hover {
 	flex: none;
 }
 
-.wbp-step {
+.wbpp-step {
 	width: 36px;
 	height: 36px;
 	border: 0;
@@ -208,16 +208,16 @@ a.wbp-size:hover {
 	transition: background-color 0.15s ease;
 }
 
-.wbp-step:hover:not(:disabled) {
+.wbpp-step:hover:not(:disabled) {
 	background: #eaeaea;
 }
 
-.wbp-step:disabled {
+.wbpp-step:disabled {
 	opacity: 0.35;
 	cursor: not-allowed;
 }
 
-.wbp-count {
+.wbpp-count {
 	min-width: 40px;
 	text-align: center;
 	font-weight: 700;
@@ -226,7 +226,7 @@ a.wbp-size:hover {
 
 /* ------------------------------ summary + box preview ------------------------------ */
 
-.wbp-summary {
+.wbpp-summary {
 	margin-top: 1.5em;
 	padding: 16px;
 	border: 1px solid #e2e2e2;
@@ -238,7 +238,7 @@ a.wbp-size:hover {
 	gap: 16px;
 }
 
-.wbp-summary-main {
+.wbpp-summary-main {
 	flex: 1 1 260px;
 	display: flex;
 	flex-wrap: wrap;
@@ -246,38 +246,38 @@ a.wbp-size:hover {
 	gap: 12px;
 }
 
-.wbp-total-price {
+.wbpp-total-price {
 	font-weight: 700;
 	font-size: 1.1em;
 }
 
-.wbp-hint {
+.wbpp-hint {
 	flex: 1 1 180px;
 	color: #666;
 	font-size: 0.9em;
 }
 
-.wbp-builder.is-full .wbp-hint {
+.wbpp-builder.is-full .wbpp-hint {
 	color: #2e7d32;
 	font-weight: 600;
 }
 
-.wbp-hint.has-error {
+.wbpp-hint.has-error {
 	color: #d63638;
 	font-weight: 600;
 }
 
-button.wbp-add {
+button.wbpp-add {
 	margin-inline-start: auto;
 }
 
-button.wbp-add:disabled {
+button.wbpp-add:disabled {
 	opacity: 0.5;
 	cursor: not-allowed;
 }
 
 /* the visual box preview */
-.wbp-preview {
+.wbpp-preview {
 	position: relative;
 	width: 96px;
 	height: 96px;
@@ -289,7 +289,7 @@ button.wbp-add:disabled {
 	box-shadow: inset 0 0 0 1px #e9dff6;
 }
 
-.wbp-preview-fill {
+.wbpp-preview-fill {
 	position: absolute;
 	inset-inline: 0;
 	bottom: 0;
@@ -298,15 +298,15 @@ button.wbp-add:disabled {
 	transition: height 0.3s ease, background-color 0.3s ease;
 }
 
-.wbp-preview.is-full .wbp-preview-fill {
+.wbpp-preview.is-full .wbpp-preview-fill {
 	background: linear-gradient(180deg, #63c175, #46b450);
 }
 
-.wbp-preview.is-over .wbp-preview-fill {
+.wbpp-preview.is-over .wbpp-preview-fill {
 	background: linear-gradient(180deg, #e07679, #d63638);
 }
 
-.wbp-preview-text {
+.wbpp-preview-text {
 	position: absolute;
 	inset: 0;
 	display: flex;
@@ -318,45 +318,45 @@ button.wbp-add:disabled {
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
-.wbp-preview.is-full .wbp-preview-text {
+.wbpp-preview.is-full .wbpp-preview-text {
 	color: #1d5c28;
 }
 
-.wbp-preview.is-over .wbp-preview-text {
+.wbpp-preview.is-over .wbpp-preview-text {
 	color: #7a1d1f;
 }
 
 /* ------------------------------ mobile ------------------------------ */
 
 @media (max-width: 480px) {
-	.wbp-group-head {
+	.wbpp-group-head {
 		flex-wrap: wrap;
 	}
 
-	.wbp-row {
+	.wbpp-row {
 		flex-wrap: wrap;
 	}
 
-	.wbp-row-label {
+	.wbpp-row-label {
 		flex-basis: 100%;
 		order: -1;
 	}
 
-	.wbp-summary {
+	.wbpp-summary {
 		flex-direction: column-reverse;
 		align-items: stretch;
 		text-align: center;
 	}
 
-	.wbp-summary-main {
+	.wbpp-summary-main {
 		flex-direction: column;
 	}
 
-	.wbp-preview {
+	.wbpp-preview {
 		margin-inline: auto;
 	}
 
-	button.wbp-add {
+	button.wbpp-add {
 		margin-inline-start: 0;
 		width: 100%;
 	}

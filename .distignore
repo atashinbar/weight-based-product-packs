@@ -7,3 +7,7 @@
 .wordpress-org
 README.md
 .DS_Store
+
+# Translation files ship via translate.wordpress.org (GlotPress), not the package.
+languages/*.po
+languages/*.mo

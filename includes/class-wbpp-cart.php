@@ -9,7 +9,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-class WBP_Cart {
+class WBPP_Cart {
 
 	/**
 	 * Internal flag: an add is in progress via the pack builder.
@@ -20,8 +20,8 @@ class WBP_Cart {
 
 	public static function init() {
 		// AJAX add-to-cart.
-		add_action( 'wp_ajax_wbp_add_pack', array( __CLASS__, 'ajax_add' ) );
-		add_action( 'wp_ajax_nopriv_wbp_add_pack', array( __CLASS__, 'ajax_add' ) );
+		add_action( 'wp_ajax_wbpp_add_pack', array( __CLASS__, 'ajax_add' ) );
+		add_action( 'wp_ajax_nopriv_wbpp_add_pack', array( __CLASS__, 'ajax_add' ) );
 
 		// Block direct/classic add-to-cart of a pack without contents.
 		add_filter( 'woocommerce_add_to_cart_validation', array( __CLASS__, 'block_standard_add' ), 10, 2 );
@@ -42,7 +42,7 @@ class WBP_Cart {
 	 * ------------------------------------------------------------------- */
 
 	public static function ajax_add() {
-		check_ajax_referer( 'wbp_add_pack', 'nonce' );
+		check_ajax_referer( 'wbpp_add_pack', 'nonce' );
 
 		$pack_id = isset( $_POST['pack_id'] ) ? absint( $_POST['pack_id'] ) : 0;
 		$pack    = $pack_id ? wc_get_product( $pack_id ) : null;
@@ -62,7 +62,7 @@ class WBP_Cart {
 		}
 
 		// Only bundles allowed for this pack are accepted; prices and weights are always read from the server.
-		$allowed = WBP_Items::get_for_pack( $pack );
+		$allowed = WBPP_Items::get_for_pack( $pack );
 
 		$contents = array();
 		$total_g  = 0;
@@ -138,8 +138,8 @@ class WBP_Cart {
 			0,
 			array(),
 			array(
-				'wbp_contents' => $contents,
-				'wbp_capacity' => $capacity,
+				'wbpp_contents' => $contents,
+				'wbpp_capacity' => $capacity,
 			)
 		);
 		self::$adding_via_builder = false;
@@ -195,7 +195,7 @@ class WBP_Cart {
 			$qty = max( 1, isset( $row['qty'] ) ? (int) $row['qty'] : 1 );
 			$sum += (float) $item->get_price() * $qty;
 		}
-		if ( $pack_product instanceof WBP_Product_Pack ) {
+		if ( $pack_product instanceof WBPP_Product_Pack ) {
 			$sum += $pack_product->get_box_cost();
 		}
 		return $sum;
@@ -209,10 +209,10 @@ class WBP_Cart {
 			return;
 		}
 		foreach ( $cart->get_cart() as $cart_item ) {
-			if ( empty( $cart_item['wbp_contents'] ) ) {
+			if ( empty( $cart_item['wbpp_contents'] ) ) {
 				continue;
 			}
-			self::apply_pack_pricing( $cart_item['data'], $cart_item['wbp_contents'], isset( $cart_item['wbp_capacity'] ) ? $cart_item['wbp_capacity'] : 0 );
+			self::apply_pack_pricing( $cart_item['data'], $cart_item['wbpp_contents'], isset( $cart_item['wbpp_capacity'] ) ? $cart_item['wbpp_capacity'] : 0 );
 		}
 	}
 
@@ -220,11 +220,11 @@ class WBP_Cart {
 	 * Restore price/weight of pack lines loaded from the session.
 	 */
 	public static function session_restore( $cart_item, $values ) {
-		if ( isset( $values['wbp_contents'] ) ) {
+		if ( isset( $values['wbpp_contents'] ) ) {
 			self::apply_pack_pricing(
 				$cart_item['data'],
-				$values['wbp_contents'],
-				isset( $values['wbp_capacity'] ) ? $values['wbp_capacity'] : 0
+				$values['wbpp_contents'],
+				isset( $values['wbpp_capacity'] ) ? $values['wbpp_capacity'] : 0
 			);
 		}
 		return $cart_item;
@@ -240,7 +240,7 @@ class WBP_Cart {
 		}
 		if ( (int) $capacity_g > 0 ) {
 			// Shipping weight = pack capacity (for weight-based shipping methods).
-			$pack_product->set_weight( WBP_Items::from_grams( (int) $capacity_g ) );
+			$pack_product->set_weight( WBPP_Items::from_grams( (int) $capacity_g ) );
 		}
 	}
 
@@ -252,14 +252,14 @@ class WBP_Cart {
 	 * Show the pack contents breakdown under the cart/checkout line.
 	 */
 	public static function cart_item_data_display( $item_data, $cart_item ) {
-		if ( empty( $cart_item['wbp_contents'] ) || ! is_array( $cart_item['wbp_contents'] ) ) {
+		if ( empty( $cart_item['wbpp_contents'] ) || ! is_array( $cart_item['wbpp_contents'] ) ) {
 			return $item_data;
 		}
 
-		$bundles = WBP_Items::get_for_pack( $cart_item['product_id'] );
+		$bundles = WBPP_Items::get_for_pack( $cart_item['product_id'] );
 		$total_g = 0;
 
-		foreach ( $cart_item['wbp_contents'] as $row ) {
+		foreach ( $cart_item['wbpp_contents'] as $row ) {
 			$id = isset( $row['id'] ) ? (int) $row['id'] : 0;
 			$b  = isset( $bundles[ $id ] ) ? $bundles[ $id ] : null;
 			if ( ! $b ) {
@@ -272,15 +272,15 @@ class WBP_Cart {
 				'value' => sprintf(
 					'%1$s × %2$s (%3$s)',
 					number_format_i18n( $qty ),
-					WBP_Items::weight_label( $b['weight_g'] ),
-					WBP_Items::weight_label( $b['weight_g'] * $qty )
+					WBPP_Items::weight_label( $b['weight_g'] ),
+					WBPP_Items::weight_label( $b['weight_g'] * $qty )
 				),
 			);
 		}
 
 		$item_data[] = array(
 			'key'   => __( 'Pack total weight', 'weight-based-product-packs' ),
-			'value' => WBP_Items::weight_label( $total_g ),
+			'value' => WBPP_Items::weight_label( $total_g ),
 		);
 
 		return $item_data;
@@ -302,7 +302,7 @@ class WBP_Cart {
 
 		foreach ( WC()->cart->get_cart() as $cart_item ) {
 			// A pack line without contents (e.g. added programmatically) is invalid.
-			if ( isset( $cart_item['product_id'] ) && empty( $cart_item['wbp_contents'] ) ) {
+			if ( isset( $cart_item['product_id'] ) && empty( $cart_item['wbpp_contents'] ) ) {
 				$maybe_pack = wc_get_product( $cart_item['product_id'] );
 				if ( $maybe_pack && 'pack' === $maybe_pack->get_type() ) {
 					wc_add_notice(
@@ -313,20 +313,20 @@ class WBP_Cart {
 				}
 			}
 
-			if ( ! empty( $cart_item['wbp_contents'] ) && is_array( $cart_item['wbp_contents'] ) ) {
+			if ( ! empty( $cart_item['wbpp_contents'] ) && is_array( $cart_item['wbpp_contents'] ) ) {
 				$pack     = wc_get_product( $cart_item['product_id'] );
-				$capacity = ! empty( $cart_item['wbp_capacity'] )
-					? (int) $cart_item['wbp_capacity']
+				$capacity = ! empty( $cart_item['wbpp_capacity'] )
+					? (int) $cart_item['wbpp_capacity']
 					: ( $pack ? $pack->get_capacity_g() : 0 );
 
 				$total_g = 0;
-				foreach ( $cart_item['wbp_contents'] as $row ) {
+				foreach ( $cart_item['wbpp_contents'] as $row ) {
 					$item = wc_get_product( isset( $row['id'] ) ? (int) $row['id'] : 0 );
 					if ( ! $item ) {
 						continue;
 					}
 					$qty      = (int) $row['qty'];
-					$total_g += WBP_Items::to_grams( $item->get_weight() ) * $qty;
+					$total_g += WBPP_Items::to_grams( $item->get_weight() ) * $qty;
 					$required[ $item->get_id() ] = ( isset( $required[ $item->get_id() ] ) ? $required[ $item->get_id() ] : 0 ) + $qty * (int) $cart_item['quantity'];
 				}
 
@@ -376,8 +376,8 @@ class WBP_Cart {
 		}
 
 		foreach ( WC()->cart->get_cart() as $cart_item ) {
-			if ( ! empty( $cart_item['wbp_contents'] ) && is_array( $cart_item['wbp_contents'] ) ) {
-				foreach ( $cart_item['wbp_contents'] as $row ) {
+			if ( ! empty( $cart_item['wbpp_contents'] ) && is_array( $cart_item['wbpp_contents'] ) ) {
+				foreach ( $cart_item['wbpp_contents'] as $row ) {
 					$id = isset( $row['id'] ) ? (int) $row['id'] : 0;
 					if ( ! $id ) {
 						continue;

@@ -91,7 +91,7 @@ Yes — after payment each bundle's stock is reduced by the ordered quantity, an
 
 = Can I customize the template? =
 
-Yes — copy `templates/single-product/add-to-cart/pack-builder.php` to `your-theme/woocommerce/single-product/add-to-cart/pack-builder.php` and edit it. Styles use the `wbp-*` classes.
+Yes — copy `templates/single-product/add-to-cart/pack-builder.php` to `your-theme/woocommerce/single-product/add-to-cart/pack-builder.php` and edit it. Styles use the `wbpp-*` classes.
 
 == Changelog ==
 

@@ -8,7 +8,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-class WBP_Order {
+class WBPP_Order {
 
 	public static function init() {
 		add_action( 'woocommerce_checkout_create_order_line_item', array( __CLASS__, 'save_item_meta' ), 10, 4 );
@@ -25,13 +25,13 @@ class WBP_Order {
 	 * Save the pack contents on the order item.
 	 */
 	public static function save_item_meta( $item, $cart_item_key, $values, $order ) {
-		if ( empty( $values['wbp_contents'] ) || ! is_array( $values['wbp_contents'] ) ) {
+		if ( empty( $values['wbpp_contents'] ) || ! is_array( $values['wbpp_contents'] ) ) {
 			return;
 		}
 
-		$bundles = WBP_Items::get_for_pack( $values['product_id'] );
+		$bundles = WBPP_Items::get_for_pack( $values['product_id'] );
 
-		foreach ( $values['wbp_contents'] as $row ) {
+		foreach ( $values['wbpp_contents'] as $row ) {
 			$id = isset( $row['id'] ) ? (int) $row['id'] : 0;
 			$b  = isset( $bundles[ $id ] ) ? $bundles[ $id ] : null;
 
@@ -43,7 +43,7 @@ class WBP_Order {
 			} else {
 				$product  = wc_get_product( $id );
 				$name     = $product ? $product->get_name() : ( '#' . $id );
-				$weight_g = $product ? WBP_Items::to_grams( $product->get_weight() ) : 0;
+				$weight_g = $product ? WBPP_Items::to_grams( $product->get_weight() ) : 0;
 			}
 
 			$qty = isset( $row['qty'] ) ? (int) $row['qty'] : 0;
@@ -54,22 +54,24 @@ class WBP_Order {
 					/* translators: 1: quantity, 2: per-bundle weight, 3: total weight */
 					__( '%1$s × %2$s (%3$s)', 'weight-based-product-packs' ),
 					number_format_i18n( $qty ),
-					WBP_Items::weight_label( $weight_g ),
-					WBP_Items::weight_label( $weight_g * $qty )
+					WBPP_Items::weight_label( $weight_g ),
+					WBPP_Items::weight_label( $weight_g * $qty )
 				),
 				true
 			);
 		}
 
 		// Raw data for stock handling and later processing.
-		$item->add_meta_data( '_wbp_contents', $values['wbp_contents'], true );
-		$item->add_meta_data( '_wbp_pack_id', absint( $values['product_id'] ), true );
+		$item->add_meta_data( '_wbpp_contents', $values['wbpp_contents'], true );
+		$item->add_meta_data( '_wbpp_pack_id', absint( $values['product_id'] ), true );
 	}
 
 	/**
 	 * Hide raw meta from the order item display.
 	 */
 	public static function hidden_meta( $hidden ) {
+		$hidden[] = '_wbpp_contents';
+		$hidden[] = '_wbpp_pack_id';
 		$hidden[] = '_wbp_contents';
 		$hidden[] = '_wbp_pack_id';
 		return $hidden;
@@ -80,14 +82,17 @@ class WBP_Order {
 	 */
 	public static function maybe_reduce_stock( $order_id ) {
 		$order = wc_get_order( $order_id );
-		if ( ! $order || $order->get_meta( '_wbp_stock_reduced' ) ) {
+		if ( ! $order || $order->get_meta( '_wbpp_stock_reduced' ) ) {
 			return;
 		}
 
 		$reduced_any = false;
 
 		foreach ( $order->get_items() as $item ) {
-			$contents = $item->get_meta( '_wbp_contents' );
+			$contents = $item->get_meta( '_wbpp_contents' );
+			if ( empty( $contents ) ) {
+				$contents = $item->get_meta( '_wbp_contents' ); // legacy orders
+			}
 			if ( empty( $contents ) || ! is_array( $contents ) ) {
 				continue;
 			}
@@ -116,7 +121,7 @@ class WBP_Order {
 		}
 
 		if ( $reduced_any ) {
-			$order->update_meta_data( '_wbp_stock_reduced', gmdate( 'Y-m-d H:i:s' ) );
+			$order->update_meta_data( '_wbpp_stock_reduced', gmdate( 'Y-m-d H:i:s' ) );
 			$order->save();
 		}
 	}
@@ -126,12 +131,15 @@ class WBP_Order {
 	 */
 	public static function maybe_restore_stock( $order_id ) {
 		$order = wc_get_order( $order_id );
-		if ( ! $order || ! $order->get_meta( '_wbp_stock_reduced' ) ) {
+		if ( ! $order || ! $order->get_meta( '_wbpp_stock_reduced' ) ) {
 			return;
 		}
 
 		foreach ( $order->get_items() as $item ) {
-			$contents = $item->get_meta( '_wbp_contents' );
+			$contents = $item->get_meta( '_wbpp_contents' );
+			if ( empty( $contents ) ) {
+				$contents = $item->get_meta( '_wbp_contents' ); // legacy orders
+			}
 			if ( empty( $contents ) || ! is_array( $contents ) ) {
 				continue;
 			}
@@ -150,6 +158,7 @@ class WBP_Order {
 			}
 		}
 
+		$order->delete_meta_data( '_wbpp_stock_reduced' );
 		$order->delete_meta_data( '_wbp_stock_reduced' );
 		$order->add_order_note( __( 'Weight-based pack: stock restored for this order.', 'weight-based-product-packs' ) );
 		$order->save();

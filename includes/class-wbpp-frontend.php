@@ -5,7 +5,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-class WBP_Frontend {
+class WBPP_Frontend {
 
 	public static function init() {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'assets' ) );
@@ -30,19 +30,19 @@ class WBP_Frontend {
 			return;
 		}
 
-		wp_enqueue_style( 'wbp-pack-builder', WBP_URL . 'assets/css/pack-builder.css', array(), WBP_VERSION );
-		wp_enqueue_script( 'wbp-pack-builder', WBP_URL . 'assets/js/pack-builder.js', array(), WBP_VERSION, true );
-		wp_localize_script( 'wbp-pack-builder', 'wbpData', self::builder_data( $product ) );
+		wp_enqueue_style( 'wbpp-pack-builder', WBPP_URL . 'assets/css/pack-builder.css', array(), WBPP_VERSION );
+		wp_enqueue_script( 'wbpp-pack-builder', WBPP_URL . 'assets/js/pack-builder.js', array(), WBPP_VERSION, true );
+		wp_localize_script( 'wbpp-pack-builder', 'wbppData', self::builder_data( $product ) );
 	}
 
 	/**
 	 * Data needed by the pack builder script.
 	 *
-	 * @param WBP_Product_Pack $product
+	 * @param WBPP_Product_Pack $product
 	 * @return array
 	 */
 	public static function builder_data( $product ) {
-		$bundles = WBP_Items::get_for_pack( $product );
+		$bundles = WBPP_Items::get_for_pack( $product );
 
 		$items = array();
 		foreach ( $bundles as $b ) {
@@ -56,7 +56,7 @@ class WBP_Frontend {
 
 		return array(
 			'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
-			'nonce'          => wp_create_nonce( 'wbp_add_pack' ),
+			'nonce'          => wp_create_nonce( 'wbpp_add_pack' ),
 			'packId'         => (int) $product->get_id(),
 			'capacity'       => (int) $product->get_capacity_g(),
 			'boxCost'        => (float) $product->get_box_cost(),
@@ -84,11 +84,11 @@ class WBP_Frontend {
 	 * Sibling packs sharing the same source category (e.g. 1/2/5 kg sizes),
 	 * sorted by capacity. Used by the pack-size switcher.
 	 *
-	 * @param WBP_Product_Pack $pack
+	 * @param WBPP_Product_Pack $pack
 	 * @return array[] Array of [id, capacity_g, url, is_current].
 	 */
 	public static function get_pack_sizes( $pack ) {
-		if ( ! $pack instanceof WBP_Product_Pack ) {
+		if ( ! $pack instanceof WBPP_Product_Pack ) {
 			return array();
 		}
 		$cat = $pack->get_source_cat();
@@ -106,7 +106,7 @@ class WBP_Frontend {
 		);
 
 		foreach ( $packs as $p ) {
-			/** @var WBP_Product_Pack $p */
+			/** @var WBPP_Product_Pack $p */
 			$capacity = $p->get_capacity_g();
 			if ( $capacity <= 0 || (int) $p->get_source_cat() !== (int) $cat ) {
 				continue;
@@ -138,7 +138,7 @@ class WBP_Frontend {
 			return;
 		}
 
-		$bundles = WBP_Items::get_for_pack( $product );
+		$bundles = WBPP_Items::get_for_pack( $product );
 
 		// Group bundles by parent product (one card per nut with weight rows).
 		$groups = array();
@@ -158,14 +158,14 @@ class WBP_Frontend {
 		wc_get_template(
 			'single-product/add-to-cart/pack-builder.php',
 			array(
-				'product'  => $product,
-				'bundles'  => $bundles,
-				'groups'   => array_values( $groups ),
-				'sizes'    => self::get_pack_sizes( $product ),
-				'problems' => WBP_Items::config_problems( $product ),
+				'product'        => $product,
+				'wbpp_bundles'   => $bundles,
+				'wbpp_groups'    => array_values( $groups ),
+				'wbpp_sizes'     => self::get_pack_sizes( $product ),
+				'wbpp_problems'  => WBPP_Items::config_problems( $product ),
 			),
 			'',
-			WBP_DIR . 'templates/'
+			WBPP_DIR . 'templates/'
 		);
 	}
 

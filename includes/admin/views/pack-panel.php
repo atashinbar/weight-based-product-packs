@@ -7,30 +7,30 @@
 
 defined( 'ABSPATH' ) || exit;
 ?>
-<div id="wbp_pack_data" class="panel woocommerce_options_panel hidden">
+<div id="wbpp_pack_data" class="panel woocommerce_options_panel hidden">
 	<div class="options_group">
 		<p class="form-field">
-			<label for="_wbp_capacity_g"><?php esc_html_e( 'Pack capacity (grams)', 'weight-based-product-packs' ); ?></label>
-			<input type="number" min="50" step="10" name="_wbp_capacity_g" id="_wbp_capacity_g"
+			<label for="_wbpp_capacity_g"><?php esc_html_e( 'Pack capacity (grams)', 'weight-based-product-packs' ); ?></label>
+			<input type="number" min="50" step="10" name="_wbpp_capacity_g" id="_wbpp_capacity_g"
 				value="<?php echo esc_attr( $capacity ); ?>" placeholder="<?php echo esc_attr( '1000' ); ?>" />
 			<?php echo wc_help_tip( esc_html__( 'The total weight of the bundles inside the pack must equal this number exactly; e.g. enter 1000 for a 1 kg box.', 'weight-based-product-packs' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</p>
 
 		<p class="form-field">
-			<label for="_wbp_box_cost"><?php esc_html_e( 'Box cost (optional)', 'weight-based-product-packs' ); ?></label>
-			<input type="text" class="short wc_input_price" name="_wbp_box_cost" id="_wbp_box_cost"
+			<label for="_wbpp_box_cost"><?php esc_html_e( 'Box cost (optional)', 'weight-based-product-packs' ); ?></label>
+			<input type="text" class="short wc_input_price" name="_wbpp_box_cost" id="_wbpp_box_cost"
 				value="<?php echo esc_attr( $box_cost ); ?>" placeholder="<?php echo esc_attr( '0' ); ?>" />
 			<?php echo wc_help_tip( esc_html__( 'A fixed amount added to the total price of the pack contents; the cost of the box itself.', 'weight-based-product-packs' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</p>
 
 		<p class="form-field">
-			<label for="_wbp_source_cat"><?php esc_html_e( 'Allowed items category', 'weight-based-product-packs' ); ?></label>
+			<label for="_wbpp_source_cat"><?php esc_html_e( 'Allowed items category', 'weight-based-product-packs' ); ?></label>
 			<?php
 			wp_dropdown_categories(
 				array(
 					'taxonomy'          => 'product_cat',
-					'name'              => '_wbp_source_cat',
-					'id'                => '_wbp_source_cat',
+					'name'              => '_wbpp_source_cat',
+					'id'                => '_wbpp_source_cat',
 					'selected'          => $cat,
 					'show_option_none'  => __( '— Select a category —', 'weight-based-product-packs' ),
 					'option_none_value' => '0',
@@ -44,8 +44,8 @@ defined( 'ABSPATH' ) || exit;
 		</p>
 
 		<p class="form-field">
-			<label for="_wbp_exclude_ids"><?php esc_html_e( 'Excluded IDs (optional)', 'weight-based-product-packs' ); ?></label>
-			<input type="text" name="_wbp_exclude_ids" id="_wbp_exclude_ids"
+			<label for="_wbpp_exclude_ids"><?php esc_html_e( 'Excluded IDs (optional)', 'weight-based-product-packs' ); ?></label>
+			<input type="text" name="_wbpp_exclude_ids" id="_wbpp_exclude_ids"
 				value="<?php echo esc_attr( $excluded ); ?>" placeholder="<?php echo esc_attr( '12,34' ); ?>" />
 			<?php echo wc_help_tip( esc_html__( 'Comma-separated product or variation IDs that should not be shown in this pack.', 'weight-based-product-packs' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</p>

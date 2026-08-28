@@ -6,7 +6,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-class WBP_Product_Pack extends WC_Product_Simple {
+class WBPP_Product_Pack extends WC_Product_Simple {
 
 	/**
 	 * Product type identifier.
@@ -19,28 +19,28 @@ class WBP_Product_Pack extends WC_Product_Simple {
 	 * Pack capacity in grams.
 	 */
 	public function get_capacity_g( $context = 'view' ) {
-		return (int) $this->get_meta( '_wbp_capacity_g', true, $context );
+		return (int) $this->get_meta( '_wbpp_capacity_g', true, $context );
 	}
 
 	/**
 	 * Optional fixed box/packaging cost.
 	 */
 	public function get_box_cost( $context = 'view' ) {
-		return (float) $this->get_meta( '_wbp_box_cost', true, $context );
+		return (float) $this->get_meta( '_wbpp_box_cost', true, $context );
 	}
 
 	/**
 	 * Term ID of the product category bundles are sourced from.
 	 */
 	public function get_source_cat( $context = 'view' ) {
-		return (int) $this->get_meta( '_wbp_source_cat', true, $context );
+		return (int) $this->get_meta( '_wbpp_source_cat', true, $context );
 	}
 
 	/**
 	 * Product/variation IDs excluded from this pack.
 	 */
 	public function get_exclude_ids( $context = 'view' ) {
-		$raw = $this->get_meta( '_wbp_exclude_ids', true, $context );
+		$raw = $this->get_meta( '_wbpp_exclude_ids', true, $context );
 		if ( empty( $raw ) ) {
 			return array();
 		}
@@ -52,7 +52,7 @@ class WBP_Product_Pack extends WC_Product_Simple {
 	 * Pack capacity converted to the store weight unit (used for shipping).
 	 */
 	public function get_capacity_in_store_unit() {
-		return WBP_Items::from_grams( $this->get_capacity_g() );
+		return WBPP_Items::from_grams( $this->get_capacity_g() );
 	}
 
 	/* ---------------------------------------------------------------------
@@ -79,7 +79,7 @@ class WBP_Product_Pack extends WC_Product_Simple {
 	 */
 	public static function map_product_class( $classname, $product_type, $post_type, $product_id ) {
 		if ( 'pack' === $product_type ) {
-			return 'WBP_Product_Pack';
+			return 'WBPP_Product_Pack';
 		}
 		return $classname;
 	}
@@ -107,7 +107,7 @@ class WBP_Product_Pack extends WC_Product_Simple {
 	 */
 	public static function filter_price_html( $html, $product ) {
 		if ( $product instanceof self ) {
-			$html = '<span class="wbp-price-hint">' .
+			$html = '<span class="wbpp-price-hint">' .
 				esc_html__( 'Final price is calculated based on the selected contents.', 'weight-based-product-packs' ) .
 				'</span>';
 		}

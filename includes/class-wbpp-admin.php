@@ -5,7 +5,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-class WBP_Admin {
+class WBPP_Admin {
 
 	public static function init() {
 		add_filter( 'woocommerce_product_data_tabs', array( __CLASS__, 'tabs' ) );
@@ -17,9 +17,9 @@ class WBP_Admin {
 	 * Add the "Pack Settings" tab and hide the General (price) tab for packs.
 	 */
 	public static function tabs( $tabs ) {
-		$tabs['wbp_pack'] = array(
+		$tabs['wbpp_pack'] = array(
 			'label'    => __( 'Pack Settings', 'weight-based-product-packs' ),
-			'target'   => 'wbp_pack_data',
+			'target'   => 'wbpp_pack_data',
 			'class'    => array( 'show_if_pack' ),
 			'priority' => 15,
 		);
@@ -47,12 +47,12 @@ class WBP_Admin {
 
 		$product = $product_id ? wc_get_product( $product_id ) : null;
 
-		$capacity = $product ? $product->get_meta( '_wbp_capacity_g', true ) : '';
-		$box_cost = $product ? $product->get_meta( '_wbp_box_cost', true ) : '';
-		$cat      = $product ? (int) $product->get_meta( '_wbp_source_cat', true ) : 0;
-		$excluded = $product ? (string) $product->get_meta( '_wbp_exclude_ids', true ) : '';
+		$capacity = $product ? $product->get_meta( '_wbpp_capacity_g', true ) : '';
+		$box_cost = $product ? $product->get_meta( '_wbpp_box_cost', true ) : '';
+		$cat      = $product ? (int) $product->get_meta( '_wbpp_source_cat', true ) : 0;
+		$excluded = $product ? (string) $product->get_meta( '_wbpp_exclude_ids', true ) : '';
 
-		include WBP_DIR . 'includes/admin/views/pack-panel.php';
+		include WBPP_DIR . 'includes/admin/views/pack-panel.php';
 	}
 
 	/**
@@ -74,15 +74,15 @@ class WBP_Admin {
 			return;
 		}
 
-		$capacity = isset( $_POST['_wbp_capacity_g'] ) ? absint( $_POST['_wbp_capacity_g'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$box_cost = isset( $_POST['_wbp_box_cost'] ) ? wc_format_decimal( sanitize_text_field( wp_unslash( $_POST['_wbp_box_cost'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$cat      = isset( $_POST['_wbp_source_cat'] ) ? absint( $_POST['_wbp_source_cat'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$excluded = isset( $_POST['_wbp_exclude_ids'] ) ? sanitize_text_field( wp_unslash( $_POST['_wbp_exclude_ids'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$capacity = isset( $_POST['_wbpp_capacity_g'] ) ? absint( $_POST['_wbpp_capacity_g'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$box_cost = isset( $_POST['_wbpp_box_cost'] ) ? wc_format_decimal( sanitize_text_field( wp_unslash( $_POST['_wbpp_box_cost'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$cat      = isset( $_POST['_wbpp_source_cat'] ) ? absint( $_POST['_wbpp_source_cat'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$excluded = isset( $_POST['_wbpp_exclude_ids'] ) ? sanitize_text_field( wp_unslash( $_POST['_wbpp_exclude_ids'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
-		$product->update_meta_data( '_wbp_capacity_g', $capacity );
-		$product->update_meta_data( '_wbp_box_cost', $box_cost );
-		$product->update_meta_data( '_wbp_source_cat', $cat );
-		$product->update_meta_data( '_wbp_exclude_ids', $excluded );
+		$product->update_meta_data( '_wbpp_capacity_g', $capacity );
+		$product->update_meta_data( '_wbpp_box_cost', $box_cost );
+		$product->update_meta_data( '_wbpp_source_cat', $cat );
+		$product->update_meta_data( '_wbpp_exclude_ids', $excluded );
 
 		// Packs have no fixed base price; keep the price fields empty.
 		$product->set_price( '' );

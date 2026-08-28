@@ -17,10 +17,10 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WBP_VERSION', '1.0.0' );
-define( 'WBP_FILE', __FILE__ );
-define( 'WBP_DIR', plugin_dir_path( __FILE__ ) );
-define( 'WBP_URL', plugin_dir_url( __FILE__ ) );
+define( 'WBPP_VERSION', '1.0.0' );
+define( 'WBPP_FILE', __FILE__ );
+define( 'WBPP_DIR', plugin_dir_path( __FILE__ ) );
+define( 'WBPP_URL', plugin_dir_url( __FILE__ ) );
 
 /**
  * Declare HPOS compatibility (WooCommerce custom order tables).
@@ -34,24 +34,52 @@ add_action( 'before_woocommerce_init', function () {
 /**
  * On activation: register the `pack` term in WooCommerce's product_type taxonomy.
  */
-function wbp_activate() {
+function wbpp_activate() {
 	if ( ! term_exists( 'pack', 'product_type' ) ) {
 		wp_insert_term( 'pack', 'product_type' );
 	}
 }
-register_activation_hook( __FILE__, 'wbp_activate' );
+register_activation_hook( __FILE__, 'wbpp_activate' );
 
 /**
- * Load translations.
- *
- * Intentionally kept although discouraged for WordPress.org-hosted plugins
- * (translations load automatically there): bundled .mo files should also work
- * on self-hosted installs that use this plugin outside the directory.
+ * One-time migration: copy pack meta from the pre-review `_wbp_` prefix to `_wbpp_`.
+ * (Keeps existing stores working after the prefix was lengthened for review.)
  */
-function wbp_load_textdomain() {
-	load_plugin_textdomain( 'weight-based-product-packs', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+function wbpp_migrate_legacy_meta() {
+	if ( get_option( 'wbpp_legacy_meta_migrated' ) ) {
+		return;
+	}
+
+	$keys = array( '_wbp_capacity_g', '_wbp_box_cost', '_wbp_source_cat', '_wbp_exclude_ids' );
+
+	$packs = wc_get_products(
+		array(
+			'type'   => 'pack',
+			'status' => 'any',
+			'limit'  => -1,
+		)
+	);
+
+	foreach ( $packs as $pack ) {
+		$updated = false;
+		foreach ( $keys as $old_key ) {
+			$new_key = str_replace( '_wbp_', '_wbpp_', $old_key );
+			if ( $pack->get_meta( $new_key ) && '' !== $pack->get_meta( $new_key ) ) {
+				continue;
+			}
+			$old = $pack->get_meta( $old_key );
+			if ( '' !== $old && null !== $old ) {
+				$pack->update_meta_data( $new_key, $old );
+				$updated = true;
+			}
+		}
+		if ( $updated ) {
+			$pack->save();
+		}
+	}
+
+	update_option( 'wbpp_legacy_meta_migrated', 1 );
 }
-add_action( 'init', 'wbp_load_textdomain' );
 
 /**
  * Boot the plugin once WooCommerce is fully loaded.
@@ -59,26 +87,28 @@ add_action( 'init', 'wbp_load_textdomain' );
  * Note: in recent WooCommerce versions the WooCommerce class is not available
  * during `plugins_loaded`, so we hook `woocommerce_loaded` instead.
  */
-function wbp_boot() {
+function wbpp_boot() {
 	if ( ! class_exists( 'WooCommerce' ) ) {
 		return;
 	}
 
-	require_once WBP_DIR . 'includes/class-wbp-product-pack.php';
-	require_once WBP_DIR . 'includes/class-wbp-items.php';
-	require_once WBP_DIR . 'includes/class-wbp-admin.php';
-	require_once WBP_DIR . 'includes/class-wbp-cart.php';
-	require_once WBP_DIR . 'includes/class-wbp-order.php';
-	require_once WBP_DIR . 'includes/class-wbp-frontend.php';
+	require_once WBPP_DIR . 'includes/class-wbpp-product-pack.php';
+	require_once WBPP_DIR . 'includes/class-wbpp-items.php';
+	require_once WBPP_DIR . 'includes/class-wbpp-admin.php';
+	require_once WBPP_DIR . 'includes/class-wbpp-cart.php';
+	require_once WBPP_DIR . 'includes/class-wbpp-order.php';
+	require_once WBPP_DIR . 'includes/class-wbpp-frontend.php';
 
-	WBP_Product_Pack::init();
-	WBP_Items::init();
-	WBP_Admin::init();
-	WBP_Cart::init();
-	WBP_Order::init();
-	WBP_Frontend::init();
+	WBPP_Product_Pack::init();
+	WBPP_Items::init();
+	WBPP_Admin::init();
+	WBPP_Cart::init();
+	WBPP_Order::init();
+	WBPP_Frontend::init();
+
+	add_action( 'init', 'wbpp_migrate_legacy_meta' );
 }
-add_action( 'woocommerce_loaded', 'wbp_boot' );
+add_action( 'woocommerce_loaded', 'wbpp_boot' );
 
 /**
  * Admin notice when WooCommerce is missing.

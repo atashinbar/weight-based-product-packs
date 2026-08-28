@@ -10,7 +10,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-class WBP_Items {
+class WBPP_Items {
 
 	/**
 	 * Per-request cache (pack_id => bundles).
@@ -88,7 +88,7 @@ class WBP_Items {
 	 * Returns an array keyed by product/variation ID; each value describes one bundle:
 	 * id, parent_id, name, weight_g, price, price_html, stock (null = unlimited), image_url, permalink.
 	 *
-	 * @param WBP_Product_Pack|int $pack
+	 * @param WBPP_Product_Pack|int $pack
 	 * @return array
 	 */
 	public static function get_for_pack( $pack ) {
@@ -240,7 +240,7 @@ class WBP_Items {
 	/**
 	 * Configuration problems for a pack (shown to the shop manager).
 	 *
-	 * @param WBP_Product_Pack $pack
+	 * @param WBPP_Product_Pack $pack
 	 * @return array
 	 */
 	public static function config_problems( $pack ) {
