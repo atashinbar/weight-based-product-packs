@@ -14,14 +14,14 @@ msgstr ""
 msgid "Weight-Based Product Packs requires WooCommerce to be installed and activated."
 msgstr ""
 
-#: includes/class-wbp-product-pack.php
+#: includes/class-wbpp-product-pack.php
 msgid "Weight-Based Pack"
 msgstr ""
 
 msgid "Final price is calculated based on the selected contents."
 msgstr ""
 
-#: includes/class-wbp-items.php
+#: includes/class-wbpp-items.php
 msgid "%s kg"
 msgstr ""
 
@@ -40,7 +40,7 @@ msgstr ""
 msgid "No combination of the current bundle weights can fill the %s g capacity exactly; adjust the weights or the capacity."
 msgstr ""
 
-#: includes/class-wbp-admin.php
+#: includes/class-wbpp-admin.php
 msgid "Pack Settings"
 msgstr ""
 
@@ -75,7 +75,7 @@ msgstr ""
 msgid "Tip: for the pack to be fillable exactly, the bundle weights must be able to build multiples of the pack capacity; e.g. 100 g, 200 g and 500 g bundles are ideal for a 1000 g pack."
 msgstr ""
 
-#: includes/class-wbp-cart.php
+#: includes/class-wbpp-cart.php
 msgid "Pack not found."
 msgstr ""
 
@@ -115,7 +115,7 @@ msgstr ""
 msgid "Insufficient stock for \"%1$s\" for this order (current stock: %2$s)."
 msgstr ""
 
-#: includes/class-wbp-order.php
+#: includes/class-wbpp-order.php
 msgid "%1$s × %2$s (%3$s)"
 msgstr ""
 
@@ -125,7 +125,7 @@ msgstr ""
 msgid "Weight-based pack: stock restored for this order."
 msgstr ""
 
-#: includes/class-wbp-frontend.php
+#: includes/class-wbpp-frontend.php
 msgid "%s g remaining"
 msgstr ""
 

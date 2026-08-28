@@ -16,14 +16,14 @@ msgstr ""
 msgid "Weight-Based Product Packs requires WooCommerce to be installed and activated."
 msgstr "افزونه «پک وزنی» نیازمند نصب و فعال‌سازی ووکامرس است."
 
-#: includes/class-wbp-product-pack.php
+#: includes/class-wbpp-product-pack.php
 msgid "Weight-Based Pack"
 msgstr "پک وزنی"
 
 msgid "Final price is calculated based on the selected contents."
 msgstr "قیمت نهایی به‌ازای محتوای انتخابی محاسبه می‌شود."
 
-#: includes/class-wbp-items.php
+#: includes/class-wbpp-items.php
 msgid "%s kg"
 msgstr "%s کیلوگرم"
 
@@ -42,7 +42,7 @@ msgstr "هیچ بسته وزنی معتبری در دسته‌بندی انتخ�
 msgid "No combination of the current bundle weights can fill the %s g capacity exactly; adjust the weights or the capacity."
 msgstr "هیچ ترکیبی از وزن بسته‌های فعلی نمی‌تواند ظرفیت %s گرمی را دقیقاً پر کند؛ وزن‌ها یا ظرفیت را اصلاح کنید."
 
-#: includes/class-wbp-admin.php
+#: includes/class-wbpp-admin.php
 msgid "Pack Settings"
 msgstr "تنظیمات پک"
 
@@ -77,7 +77,7 @@ msgstr "شناسه محصولات یا واریشن‌هایی که نباید �
 msgid "Tip: for the pack to be fillable exactly, the bundle weights must be able to build multiples of the pack capacity; e.g. 100 g, 200 g and 500 g bundles are ideal for a 1000 g pack."
 msgstr "راهنما: برای اینکه مشتری بتواند پک را دقیقاً پر کند، وزن بسته‌ها باید بتوانند مضربی از ظرفیت پک را بسازند؛ مثلاً بسته‌های ۱۰۰ و ۲۰۰ و ۵۰۰ گرمی برای پک ۱۰۰۰ گرمی ایده‌آل‌اند."
 
-#: includes/class-wbp-cart.php
+#: includes/class-wbpp-cart.php
 msgid "Pack not found."
 msgstr "پک موردنظر یافت نشد."
 
@@ -117,7 +117,7 @@ msgstr "یکی از پک‌های سبد خرید معتبر نیست؛ لطفا
 msgid "Insufficient stock for \"%1$s\" for this order (current stock: %2$s)."
 msgstr "موجودی «%1$s» برای این سفارش کافی نیست (موجودی فعلی: %2$s)."
 
-#: includes/class-wbp-order.php
+#: includes/class-wbpp-order.php
 msgid "%1$s × %2$s (%3$s)"
 msgstr "%1$s عدد × %2$s (%3$s)"
 
@@ -127,7 +127,7 @@ msgstr "پک وزنی: %1$s واحد از موجودی «%2$s» کسر شد."
 msgid "Weight-based pack: stock restored for this order."
 msgstr "پک وزنی: موجودی بسته‌های این سفارش بازگردانده شد."
 
-#: includes/class-wbp-frontend.php
+#: includes/class-wbpp-frontend.php
 msgid "%s g remaining"
 msgstr "%s گرم باقی مانده"
 
