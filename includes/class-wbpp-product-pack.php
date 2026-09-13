@@ -72,6 +72,9 @@ class WBPP_Product_Pack extends WC_Product_Simple {
 
 		add_filter( 'woocommerce_is_purchasable', array( __CLASS__, 'filter_is_purchasable' ), 10, 2 );
 		add_filter( 'woocommerce_get_price_html', array( __CLASS__, 'filter_price_html' ), 10, 2 );
+
+		// REST API: keep type=pack on create/update (belt and suspenders; see rest_force_type).
+		add_action( 'woocommerce_rest_insert_product_object', array( __CLASS__, 'rest_force_type' ), 10, 3 );
 	}
 
 	/**
@@ -113,4 +116,32 @@ class WBPP_Product_Pack extends WC_Product_Simple {
 		}
 		return $html;
 	}
+
+	/**
+	 * REST API: make sure a product created/updated with type=pack keeps the
+	 * `pack` product_type term.
+	 *
+	 * The products controller resolves the class name via
+	 * WC_Product_Factory::get_classname_from_product_type() (WC_Product_{type});
+	 * the WBPP_Product_Pack bridge class below satisfies that convention, but this
+	 * hook guarantees the term even if the controller instantiated a simple product.
+	 */
+	public static function rest_force_type( $product, $request, $creating ) {
+		$type = $request->get_param( 'type' );
+		if ( 'pack' !== $type || ! $product || 'pack' === $product->get_type() ) {
+			return;
+		}
+		wp_set_object_terms( $product->get_id(), 'pack', 'product_type' );
+		clean_post_cache( $product->get_id() );
+		wc_delete_product_transients( $product->get_id() );
+	}
+}
+
+if ( ! class_exists( 'WC_Product_Pack' ) ) {
+	/**
+	 * Bridge class for the WooCommerce product class-name convention
+	 * (WC_Product_{type}) used by WC_Product_Factory and the REST products
+	 * controller, so `type: pack` resolves to the real pack class.
+	 */
+	class WC_Product_Pack extends WBPP_Product_Pack {}
 }
