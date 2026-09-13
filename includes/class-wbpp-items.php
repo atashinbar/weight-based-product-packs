@@ -64,13 +64,16 @@ class WBPP_Items {
 	}
 
 	/**
-	 * Human readable weight label, e.g. "200 g" or "1.5 kg".
+	 * Human readable weight label, e.g. "200 g", "1 kg" or "1.5 kg".
+	 *
+	 * Fractional kilograms always keep one decimal, independent of the store's
+	 * price-decimals setting (a price precision of 0 would round 1.5 kg to 2 kg).
 	 */
 	public static function weight_label( $grams ) {
 		$grams = (int) $grams;
 		if ( $grams >= 1000 ) {
 			$kg    = $grams / 1000;
-			$label = number_format_i18n( $kg, ( fmod( $kg, 1 ) !== 0.0 ) ? wc_get_price_decimals() : 0 );
+			$label = number_format_i18n( $kg, ( fmod( $kg, 1 ) !== 0.0 ) ? 1 : 0 );
 			/* translators: %s: weight in kilograms */
 			return sprintf( __( '%s kg', 'weight-based-product-packs' ), $label );
 		}
