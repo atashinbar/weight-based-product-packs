@@ -4,7 +4,7 @@ Tags: woocommerce, pack, weight, mix and match, box builder
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -94,6 +94,11 @@ Yes — after payment each bundle's stock is reduced by the ordered quantity, an
 Yes — copy `templates/single-product/add-to-cart/pack-builder.php` to `your-theme/woocommerce/single-product/add-to-cart/pack-builder.php` and edit it. Styles use the `wbpp-*` classes.
 
 == Changelog ==
+
+= 1.1.0 =
+* REST API: create and update products with type=pack in a single call
+* Optional per-pack mixing step (e.g. 250 g) with per-gram prorated pricing
+* Optional packaging selector in the builder (label, cost, capacity per option)
 
 = 1.0.0 =
 * Initial release.

@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Weight-Based Product Packs for WooCommerce
  * Description:       Let customers fill weight-based packs (e.g. 1 kg boxes) with pre-defined weight bundles. A pack can only be purchased when its total weight exactly matches its capacity.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Author:            Ali Atashinbar
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WBPP_VERSION', '1.0.0' );
+define( 'WBPP_VERSION', '1.1.0' );
 define( 'WBPP_FILE', __FILE__ );
 define( 'WBPP_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WBPP_URL', plugin_dir_url( __FILE__ ) );

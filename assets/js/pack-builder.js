@@ -32,7 +32,25 @@
 	wbppData.boxCost = parseFloat(wbppData.boxCost) || 0;
 	wbppData.step = parseInt(wbppData.step, 10) || 0;
 
+	// Packaging options (when configured). Index 0 = default selection.
+	var packagings = Array.isArray(wbppData.packagings) ? wbppData.packagings : [];
+	packagings.forEach(function (p) {
+		p.index = parseInt(p.index, 10);
+		p.cost = parseFloat(p.cost) || 0;
+		p.capacity = parseInt(p.capacity, 10) || wbppData.capacity;
+	});
+	var packaging = packagings.length ? packagings[0] : null;
+
+	// The active capacity/cost come from the selected packaging when present.
+	function activeCapacity() {
+		return packaging ? packaging.capacity : wbppData.capacity;
+	}
+	function activeBoxCost() {
+		return packaging ? packaging.cost : wbppData.boxCost;
+	}
+
 	var counts = {};
+	var selectionOrder = []; // ids in the order they were added
 	var pending = false;
 	var lastError = '';
 
@@ -108,9 +126,13 @@
 		return it.price * qty;
 	}
 
+	function totalGrams() {
+		return totals().grams;
+	}
+
 	function totals() {
 		var grams = 0;
-		var price = parseFloat(wbppData.boxCost) || 0;
+		var price = activeBoxCost();
 		Object.keys(counts).forEach(function (id) {
 			var c = counts[id];
 			if (!c) { return; }
@@ -126,7 +148,7 @@
 
 	function render() {
 		var t = totals();
-		var capacity = wbppData.capacity;
+		var capacity = activeCapacity();
 		var remaining = capacity - t.grams;
 
 		// Rows and stepper buttons.
@@ -180,6 +202,10 @@
 		if (elCurrent) {
 			elCurrent.textContent = faNum(t.grams);
 		}
+		var elCap = root.querySelector('.wbpp-capacity');
+		if (elCap) {
+			elCap.textContent = faNum(capacity);
+		}
 		root.classList.toggle('is-empty', t.grams === 0);
 		root.classList.toggle('is-partial', t.grams > 0 && remaining > 0);
 		root.classList.toggle('is-full', remaining === 0 && t.grams > 0);
@@ -218,8 +244,8 @@
 		// Live price.
 		if (elPrice) {
 			var label = money(t.price);
-			if ((parseFloat(wbppData.boxCost) || 0) > 0) {
-				label += ' (' + wbppData.i18n.boxCost + ': ' + money(parseFloat(wbppData.boxCost)) + ')';
+			if (activeBoxCost() > 0) {
+				label += ' (' + wbppData.i18n.boxCost + ': ' + money(activeBoxCost()) + ')';
 			}
 			elPrice.textContent = label;
 		}
@@ -229,6 +255,44 @@
 			elAdd.disabled = !(t.grams > 0 && remaining === 0);
 		}
 	}
+
+	/* ------------------------------ packaging ------------------------------ */
+
+	root.querySelectorAll('.wbpp-pkg').forEach(function (btn) {
+		btn.addEventListener('click', function () {
+			var idx = parseInt(btn.getAttribute('data-index'), 10);
+			var next = null;
+			packagings.forEach(function (p) { if (p.index === idx) { next = p; } });
+			if (!next || (packaging && next.index === packaging.index)) {
+				return;
+			}
+			packaging = next;
+
+			// Shrink the selection when the new capacity is smaller: remove from
+			// the most recently added units until the total fits.
+			var over = totalGrams() - packaging.capacity;
+			if (over > 0) {
+				var order = selectionOrder.slice().reverse(); // newest first
+				for (var i = 0; i < order.length && over > 0; i++) {
+					var id = order[i];
+					var it = items[id];
+					if (!it || !counts[id]) { continue; }
+					var unit = unitWeight(it);
+					while (counts[id] > 0 && over > 0) {
+						counts[id]--;
+						over -= unit;
+					}
+				}
+			}
+			selectionOrder = selectionOrder.filter(function (id) { return counts[id] > 0; });
+
+			root.querySelectorAll('.wbpp-pkg').forEach(function (b) {
+				b.classList.toggle('is-current', parseInt(b.getAttribute('data-index'), 10) === packaging.index);
+			});
+			lastError = '';
+			render();
+		});
+	});
 
 	/* ------------------------------ events ------------------------------ */
 
@@ -241,9 +305,10 @@
 			var id1 = row1.getAttribute('data-id');
 			var it1 = items[id1];
 			var t1 = totals();
-			if (it1 && t1.grams + unitWeight(it1) <= wbppData.capacity) {
+			if (it1 && t1.grams + unitWeight(it1) <= activeCapacity()) {
 				var nextCount = totalCount(id1) + 1;
 				if (it1.stock === null || consumedUnits(it1, nextCount) <= it1.stock) {
+					if (!counts[id1]) { selectionOrder.push(id1); }
 					counts[id1] = nextCount;
 					lastError = '';
 				}
@@ -256,6 +321,7 @@
 			var id2 = row2.getAttribute('data-id');
 			if (counts[id2] > 0) {
 				counts[id2]--;
+				if (!counts[id2]) { selectionOrder = selectionOrder.filter(function (x) { return x !== id2; }); }
 				lastError = '';
 			}
 			render();
@@ -268,7 +334,7 @@
 				return;
 			}
 			var t = totals();
-			if (t.grams !== wbppData.capacity) {
+			if (t.grams !== activeCapacity()) {
 				return;
 			}
 
@@ -283,6 +349,9 @@
 			fd.append('nonce', wbppData.nonce);
 			fd.append('pack_id', wbppData.packId);
 			fd.append('contents', JSON.stringify(contents));
+			if (packaging) {
+				fd.append('packaging', String(packaging.index));
+			}
 
 			pending = true;
 			elAdd.disabled = true;

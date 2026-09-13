@@ -54,6 +54,19 @@ class WBPP_Frontend {
 			);
 		}
 
+		// Packaging options (first is preselected; a single implicit unlabeled
+		// row means "no packaging selector" — the 1.0.0 UI).
+		$packagings = array();
+		foreach ( $product->get_packagings() as $index => $row ) {
+			$packagings[] = array(
+				'index'    => (int) $index,
+				'label'    => (string) $row['label'],
+				'cost'     => (float) $row['cost'],
+				'capacity' => (int) $row['capacity_g'],
+				'imageUrl' => $row['image_id'] ? wp_get_attachment_image_url( $row['image_id'], 'thumbnail' ) : '',
+			);
+		}
+
 		return array(
 			'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
 			'nonce'          => wp_create_nonce( 'wbpp_add_pack' ),
@@ -61,6 +74,7 @@ class WBPP_Frontend {
 			'capacity'       => (int) $product->get_capacity_g(),
 			'boxCost'        => (float) $product->get_box_cost(),
 			'step'           => (int) $product->get_step_g(),
+			'packagings'     => $packagings,
 			'items'          => $items,
 			'locale'         => str_replace( '_', '-', get_locale() ),
 			'currencySymbol' => html_entity_decode( wp_strip_all_tags( get_woocommerce_currency_symbol() ), ENT_QUOTES, 'UTF-8' ),
@@ -76,6 +90,7 @@ class WBPP_Frontend {
 				'adding'    => __( 'Adding…', 'weight-based-product-packs' ),
 				'error'     => __( 'Server communication error; please try again.', 'weight-based-product-packs' ),
 				'boxCost'   => __( 'Box cost', 'weight-based-product-packs' ),
+				'packaging' => __( 'Packaging', 'weight-based-product-packs' ),
 				'grams'     => __( 'g', 'weight-based-product-packs' ),
 			),
 		);
@@ -159,11 +174,12 @@ class WBPP_Frontend {
 		wc_get_template(
 			'single-product/add-to-cart/pack-builder.php',
 			array(
-				'product'        => $product,
-				'wbpp_bundles'   => $bundles,
-				'wbpp_groups'    => array_values( $groups ),
-				'wbpp_sizes'     => self::get_pack_sizes( $product ),
-				'wbpp_problems'  => WBPP_Items::config_problems( $product ),
+				'product'          => $product,
+				'wbpp_bundles'     => $bundles,
+				'wbpp_groups'      => array_values( $groups ),
+				'wbpp_sizes'       => self::get_pack_sizes( $product ),
+				'wbpp_packagings'  => self::builder_data( $product )['packagings'],
+				'wbpp_problems'    => WBPP_Items::config_problems( $product ),
 			),
 			'',
 			WBPP_DIR . 'templates/'

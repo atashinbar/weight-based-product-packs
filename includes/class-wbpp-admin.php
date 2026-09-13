@@ -52,6 +52,11 @@ class WBPP_Admin {
 		$step     = $product ? $product->get_meta( '_wbpp_step_g', true ) : '';
 		$cat      = $product ? (int) $product->get_meta( '_wbpp_source_cat', true ) : 0;
 		$excluded = $product ? (string) $product->get_meta( '_wbpp_exclude_ids', true ) : '';
+		$packagings = ( $product instanceof WBPP_Product_Pack && 'pack' === $product->get_type() )
+			? $product->get_packagings()
+			: array();
+		// The implicit legacy row is not shown in the repeater (empty meta is).
+		$has_custom_packagings = (bool) $product->get_meta( '_wbpp_packagings', true );
 
 		include WBPP_DIR . 'includes/admin/views/pack-panel.php';
 	}
@@ -81,11 +86,35 @@ class WBPP_Admin {
 		$cat      = isset( $_POST['_wbpp_source_cat'] ) ? absint( $_POST['_wbpp_source_cat'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$excluded = isset( $_POST['_wbpp_exclude_ids'] ) ? sanitize_text_field( wp_unslash( $_POST['_wbpp_exclude_ids'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
+		// Packaging rows (label/cost/capacity); fully empty rows are dropped.
+		$packagings = array();
+		if ( isset( $_POST['_wbpp_packagings'] ) && is_array( $_POST['_wbpp_packagings'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			foreach ( wp_unslash( $_POST['_wbpp_packagings'] ) as $row ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized below.
+				if ( ! is_array( $row ) ) {
+					continue;
+				}
+				$label = isset( $row['label'] ) ? sanitize_text_field( (string) $row['label'] ) : '';
+				$cost  = isset( $row['cost'] ) ? (float) wc_format_decimal( sanitize_text_field( (string) $row['cost'] ) ) : 0.0;
+				$cap   = isset( $row['capacity_g'] ) ? absint( $row['capacity_g'] ) : 0;
+				$img   = isset( $row['image_id'] ) ? absint( $row['image_id'] ) : 0;
+				if ( '' === $label && 0.0 === $cost && 0 === $cap ) {
+					continue;
+				}
+				$packagings[] = array(
+					'label'      => $label,
+					'cost'       => $cost,
+					'capacity_g' => $cap,
+					'image_id'   => $img,
+				);
+			}
+		}
+
 		$product->update_meta_data( '_wbpp_capacity_g', $capacity );
 		$product->update_meta_data( '_wbpp_box_cost', $box_cost );
 		$product->update_meta_data( '_wbpp_step_g', $step );
 		$product->update_meta_data( '_wbpp_source_cat', $cat );
 		$product->update_meta_data( '_wbpp_exclude_ids', $excluded );
+		$product->update_meta_data( '_wbpp_packagings', $packagings );
 
 		// Packs have no fixed base price; keep the price fields empty.
 		$product->set_price( '' );

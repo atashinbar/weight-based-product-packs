@@ -32,6 +32,32 @@ defined( 'ABSPATH' ) || exit;
 
 	<?php else : ?>
 
+		<?php
+		// Packaging selector — only when more than one labeled option exists.
+		$wbpp_packaging_options = array();
+		if ( count( $wbpp_packagings ) > 1 ) {
+			foreach ( $wbpp_packagings as $wbpp_pkg ) {
+				if ( '' !== $wbpp_pkg['label'] ) {
+					$wbpp_packaging_options[] = $wbpp_pkg;
+				}
+			}
+		}
+		?>
+		<?php if ( count( $wbpp_packaging_options ) > 1 ) : ?>
+			<div class="wbpp-packaging" role="group" aria-label="<?php esc_attr_e( 'Packaging', 'weight-based-product-packs' ); ?>">
+				<span class="wbpp-packaging-label"><?php esc_html_e( 'Packaging', 'weight-based-product-packs' ); ?></span>
+				<?php foreach ( $wbpp_packaging_options as $wbpp_i => $wbpp_pkg ) : ?>
+					<button type="button" class="wbpp-pkg<?php echo 0 === $wbpp_i ? ' is-current' : ''; ?>"
+						data-index="<?php echo esc_attr( (string) $wbpp_pkg['index'] ); ?>">
+						<?php if ( ! empty( $wbpp_pkg['imageUrl'] ) ) : ?>
+							<img src="<?php echo esc_url( $wbpp_pkg['imageUrl'] ); ?>" alt="" loading="lazy" />
+						<?php endif; ?>
+						<span class="wbpp-pkg-name"><?php echo esc_html( $wbpp_pkg['label'] ); ?></span>
+					</button>
+				<?php endforeach; ?>
+			</div>
+		<?php endif; ?>
+
 		<?php if ( count( $wbpp_sizes ) > 1 ) : ?>
 			<div class="wbpp-switcher" role="group" aria-label="<?php esc_attr_e( 'Pack size', 'weight-based-product-packs' ); ?>">
 				<span class="wbpp-switcher-label"><?php esc_html_e( 'Pack size', 'weight-based-product-packs' ); ?></span>

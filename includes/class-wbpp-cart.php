@@ -56,6 +56,25 @@ class WBPP_Cart {
 			wp_send_json_error( array( 'message' => __( 'This pack is not configured correctly.', 'weight-based-product-packs' ) ) );
 		}
 
+		// Optional packaging selection: validate the index and use its cost/capacity.
+		$packagings = $pack->get_packagings();
+		$packaging  = null;
+		if ( isset( $_POST['packaging'] ) && '' !== $_POST['packaging'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$pkg_index = absint( $_POST['packaging'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$found     = false;
+			foreach ( $packagings as $i => $row ) {
+				if ( $i === $pkg_index ) {
+					$packaging = $row;
+					$found     = true;
+					break;
+				}
+			}
+			if ( ! $found ) {
+				wp_send_json_error( array( 'message' => __( 'Invalid packaging selection.', 'weight-based-product-packs' ) ) );
+			}
+			$capacity = $packaging['capacity_g'] > 0 ? (int) $packaging['capacity_g'] : $capacity;
+		}
+
 		$raw = isset( $_POST['contents'] ) ? json_decode( wp_unslash( $_POST['contents'] ), true ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- JSON decoded and validated below.
 		if ( ! is_array( $raw ) ) {
 			$raw = array();
@@ -147,9 +166,10 @@ class WBPP_Cart {
 			0,
 			array(),
 			array(
-				'wbpp_contents' => $contents,
-				'wbpp_capacity' => $capacity,
-				'wbpp_step'     => $step,
+				'wbpp_contents'   => $contents,
+				'wbpp_capacity'   => $capacity,
+				'wbpp_step'       => $step,
+				'wbpp_packaging'  => $packaging,
 			)
 		);
 		self::$adding_via_builder = false;
@@ -193,9 +213,10 @@ class WBPP_Cart {
 	 *
 	 * @param WC_Product $pack_product
 	 * @param array      $contents
+	 * @param array|null $packaging  Optional selected packaging {label, cost, ...}; its cost replaces the box cost.
 	 * @return float|null Null when contents are invalid.
 	 */
-	public static function compute_price( $pack_product, $contents ) {
+	public static function compute_price( $pack_product, $contents, $packaging = null ) {
 		if ( ! is_array( $contents ) ) {
 			return null;
 		}
@@ -215,7 +236,9 @@ class WBPP_Cart {
 				$sum += (float) $item->get_price() * $qty;
 			}
 		}
-		if ( $pack_product instanceof WBPP_Product_Pack ) {
+		if ( is_array( $packaging ) && array_key_exists( 'cost', $packaging ) ) {
+			$sum += (float) $packaging['cost'];
+		} elseif ( $pack_product instanceof WBPP_Product_Pack ) {
 			$sum += $pack_product->get_box_cost();
 		}
 		return $sum;
@@ -232,7 +255,12 @@ class WBPP_Cart {
 			if ( empty( $cart_item['wbpp_contents'] ) ) {
 				continue;
 			}
-			self::apply_pack_pricing( $cart_item['data'], $cart_item['wbpp_contents'], isset( $cart_item['wbpp_capacity'] ) ? $cart_item['wbpp_capacity'] : 0 );
+			self::apply_pack_pricing(
+				$cart_item['data'],
+				$cart_item['wbpp_contents'],
+				isset( $cart_item['wbpp_capacity'] ) ? $cart_item['wbpp_capacity'] : 0,
+				isset( $cart_item['wbpp_packaging'] ) ? $cart_item['wbpp_packaging'] : null
+			);
 		}
 	}
 
@@ -244,7 +272,8 @@ class WBPP_Cart {
 			self::apply_pack_pricing(
 				$cart_item['data'],
 				$values['wbpp_contents'],
-				isset( $values['wbpp_capacity'] ) ? $values['wbpp_capacity'] : 0
+				isset( $values['wbpp_capacity'] ) ? $values['wbpp_capacity'] : 0,
+				isset( $values['wbpp_packaging'] ) ? $values['wbpp_packaging'] : null
 			);
 		}
 		return $cart_item;
@@ -253,8 +282,8 @@ class WBPP_Cart {
 	/**
 	 * Apply the computed price and the capacity weight to a cart line product object.
 	 */
-	private static function apply_pack_pricing( $pack_product, $contents, $capacity_g = 0 ) {
-		$price = self::compute_price( $pack_product, $contents );
+	private static function apply_pack_pricing( $pack_product, $contents, $capacity_g = 0, $packaging = null ) {
+		$price = self::compute_price( $pack_product, $contents, $packaging );
 		if ( null !== $price ) {
 			$pack_product->set_price( $price );
 		}
@@ -280,6 +309,18 @@ class WBPP_Cart {
 		$pack     = wc_get_product( $cart_item['product_id'] );
 		$step     = ( $pack && 'pack' === $pack->get_type() ) ? $pack->get_step_g() : 0;
 		$total_g  = 0;
+
+		// Selected packaging: first row of the contents breakdown.
+		if ( ! empty( $cart_item['wbpp_packaging'] ) && is_array( $cart_item['wbpp_packaging'] ) && '' !== (string) $cart_item['wbpp_packaging']['label'] ) {
+			$item_data[] = array(
+				'key'   => __( 'Packaging', 'weight-based-product-packs' ),
+				'value' => sprintf(
+					'%1$s (+%2$s)',
+					sanitize_text_field( (string) $cart_item['wbpp_packaging']['label'] ),
+					wp_strip_all_tags( wc_price( (float) $cart_item['wbpp_packaging']['cost'] ) )
+				),
+			);
+		}
 
 		foreach ( $cart_item['wbpp_contents'] as $row ) {
 			$id = isset( $row['id'] ) ? (int) $row['id'] : 0;

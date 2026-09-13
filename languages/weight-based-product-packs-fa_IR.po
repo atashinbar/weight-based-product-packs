@@ -157,6 +157,32 @@ msgid "No items are currently available for this pack."
 msgstr "در حال حاضر قلم قابل انتخابی برای این پک وجود ندارد."
 
 #: includes/admin/views/pack-panel.php
+#: includes/admin/views/pack-panel.php
+msgid "Packaging options"
+msgstr "گزینه‌های بسته‌بندی"
+
+msgid "Optional: let the customer choose a container (e.g. hardbox, zip pouch, glass jar). Each option can have its own cost and capacity; a capacity of 0 uses the pack capacity."
+msgstr "اختیاری: به مشتری اجازه انتخاب نوع ظرف را بدهید (مثلاً هاردباکس، پاکت زیپ‌کیپ، شیشه‌ای). هر گزینه می‌تواند هزینه و ظرفیت خودش را داشته باشد؛ ظرفیت 0 یعنی ظرفیت خود پک."
+
+msgid "Label (e.g. Hardbox)"
+msgstr "عنوان (مثلاً هاردباکس)"
+
+msgid "Cost"
+msgstr "هزینه"
+
+msgid "Capacity (grams)"
+msgstr "ظرفیت (گرم)"
+
+msgid "Add packaging"
+msgstr "افزودن بسته‌بندی"
+
+#: includes/class-wbpp-cart.php
+msgid "Invalid packaging selection."
+msgstr "انتخاب بسته‌بندی نامعتبر است."
+
+msgid "Packaging"
+msgstr "بسته‌بندی"
+
 msgid "Mixing step in grams (optional)"
 msgstr "گام ترکیب بر حسب گرم (اختیاری)"
 

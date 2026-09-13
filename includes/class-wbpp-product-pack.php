@@ -40,6 +40,55 @@ class WBPP_Product_Pack extends WC_Product_Simple {
 	}
 
 	/**
+	 * Packaging options for this pack.
+	 *
+	 * Each row: {label, cost, capacity_g, image_id}. A capacity of 0 means the
+	 * pack's default capacity.
+	 *
+	 * When no packagings are configured, a single implicit row derived from
+	 * the legacy box cost and capacity is returned (1.0.0 behavior).
+	 *
+	 * @return array[]
+	 */
+	public function get_packagings( $context = 'view' ) {
+		$rows = array();
+
+		$raw = $this->get_meta( '_wbpp_packagings', true, $context );
+		if ( is_array( $raw ) ) {
+			foreach ( $raw as $row ) {
+				if ( ! is_array( $row ) ) {
+					continue;
+				}
+				$label = isset( $row['label'] ) ? sanitize_text_field( (string) $row['label'] ) : '';
+				$cost  = isset( $row['cost'] ) ? (float) $row['cost'] : 0.0;
+				$cap   = isset( $row['capacity_g'] ) ? absint( $row['capacity_g'] ) : 0;
+				$img   = isset( $row['image_id'] ) ? absint( $row['image_id'] ) : 0;
+				if ( '' === $label && 0.0 === $cost && 0 === $cap ) {
+					continue; // skip fully empty rows
+				}
+				$rows[] = array(
+					'label'      => $label,
+					'cost'       => $cost,
+					'capacity_g' => $cap > 0 ? $cap : $this->get_capacity_g( $context ),
+					'image_id'   => $img,
+				);
+			}
+		}
+
+		if ( empty( $rows ) ) {
+			// Legacy/implicit packaging: exactly the 1.0.0 behavior.
+			$rows[] = array(
+				'label'      => '',
+				'cost'       => $this->get_box_cost( $context ),
+				'capacity_g' => $this->get_capacity_g( $context ),
+				'image_id'   => 0,
+			);
+		}
+
+		return $rows;
+	}
+
+	/**
 	 * Term ID of the product category bundles are sourced from.
 	 */
 	public function get_source_cat( $context = 'view' ) {

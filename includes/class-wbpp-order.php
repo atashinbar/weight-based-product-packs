@@ -30,6 +30,8 @@ class WBPP_Order {
 		}
 
 		$bundles = WBPP_Items::get_for_pack( $values['product_id'] );
+		$pack    = wc_get_product( $values['product_id'] );
+		$step    = ( $pack && 'pack' === $pack->get_type() ) ? $pack->get_step_g() : 0;
 
 		foreach ( $values['wbpp_contents'] as $row ) {
 			$id = isset( $row['id'] ) ? (int) $row['id'] : 0;
@@ -46,16 +48,18 @@ class WBPP_Order {
 				$weight_g = $product ? WBPP_Items::to_grams( $product->get_weight() ) : 0;
 			}
 
-			$qty = isset( $row['qty'] ) ? (int) $row['qty'] : 0;
+			$qty      = isset( $row['qty'] ) ? (int) $row['qty'] : 0;
+			$row_g    = ( $step > 0 ) ? $step * $qty : $weight_g * $qty;
+			$unit_g   = ( $step > 0 ) ? $step : $weight_g;
 
 			$item->add_meta_data(
 				$name,
 				sprintf(
-					/* translators: 1: quantity, 2: per-bundle weight, 3: total weight */
+					/* translators: 1: quantity, 2: per-unit weight, 3: total weight */
 					__( '%1$s × %2$s (%3$s)', 'weight-based-product-packs' ),
 					number_format_i18n( $qty ),
-					WBPP_Items::weight_label( $weight_g ),
-					WBPP_Items::weight_label( $weight_g * $qty )
+					WBPP_Items::weight_label( $unit_g ),
+					WBPP_Items::weight_label( $row_g )
 				),
 				true
 			);
@@ -64,6 +68,19 @@ class WBPP_Order {
 		// Raw data for stock handling and later processing.
 		$item->add_meta_data( '_wbpp_contents', $values['wbpp_contents'], true );
 		$item->add_meta_data( '_wbpp_pack_id', absint( $values['product_id'] ), true );
+
+		// Selected packaging label (visible on the order item).
+		if ( ! empty( $values['wbpp_packaging'] ) && is_array( $values['wbpp_packaging'] ) && '' !== (string) $values['wbpp_packaging']['label'] ) {
+			$item->add_meta_data(
+				__( 'Packaging', 'weight-based-product-packs' ),
+				sprintf(
+					'%1$s (+%2$s)',
+					sanitize_text_field( (string) $values['wbpp_packaging']['label'] ),
+					wp_strip_all_tags( wc_price( (float) $values['wbpp_packaging']['cost'] ) )
+				),
+				true
+			);
+		}
 	}
 
 	/**

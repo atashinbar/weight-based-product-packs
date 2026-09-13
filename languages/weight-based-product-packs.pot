@@ -155,6 +155,32 @@ msgid "No items are currently available for this pack."
 msgstr ""
 
 #: includes/admin/views/pack-panel.php
+#: includes/admin/views/pack-panel.php
+msgid "Packaging options"
+msgstr ""
+
+msgid "Optional: let the customer choose a container (e.g. hardbox, zip pouch, glass jar). Each option can have its own cost and capacity; a capacity of 0 uses the pack capacity."
+msgstr ""
+
+msgid "Label (e.g. Hardbox)"
+msgstr ""
+
+msgid "Cost"
+msgstr ""
+
+msgid "Capacity (grams)"
+msgstr ""
+
+msgid "Add packaging"
+msgstr ""
+
+#: includes/class-wbpp-cart.php
+msgid "Invalid packaging selection."
+msgstr ""
+
+msgid "Packaging"
+msgstr ""
+
 msgid "Mixing step in grams (optional)"
 msgstr ""
 

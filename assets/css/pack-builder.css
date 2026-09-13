@@ -361,3 +361,53 @@ button.wbpp-add:disabled {
 		width: 100%;
 	}
 }
+
+/* ------------------------------ packaging selector ------------------------------ */
+
+.wbpp-packaging {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 1.25em;
+}
+
+.wbpp-packaging-label {
+	font-size: 0.9em;
+	font-weight: 600;
+	color: #555;
+	margin-inline-end: 4px;
+}
+
+.wbpp-pkg {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 16px;
+	border: 1px solid #d8d8e0;
+	border-radius: 999px;
+	background: #fff;
+	color: #3c3c46;
+	font-size: 0.95em;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+
+.wbpp-pkg img {
+	width: 26px;
+	height: 26px;
+	object-fit: cover;
+	border-radius: 50%;
+}
+
+.wbpp-pkg:hover {
+	border-color: #7f54b3;
+	color: #7f54b3;
+}
+
+.wbpp-pkg.is-current {
+	background: #7f54b3;
+	border-color: #7f54b3;
+	color: #fff;
+}

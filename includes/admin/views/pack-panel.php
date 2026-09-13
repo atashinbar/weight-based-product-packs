@@ -58,6 +58,40 @@ defined( 'ABSPATH' ) || exit;
 		</p>
 	</div>
 
+	<div class="options_group wbpp-packagings-group">
+		<p class="form-field">
+			<label><?php esc_html_e( 'Packaging options', 'weight-based-product-packs' ); ?></label>
+			<span class="description" style="display:block;margin-bottom:8px;">
+				<?php esc_html_e( 'Optional: let the customer choose a container (e.g. hardbox, zip pouch, glass jar). Each option can have its own cost and capacity; a capacity of 0 uses the pack capacity.', 'weight-based-product-packs' ); ?>
+			</span>
+		</p>
+		<div class="wbpp-packagings" data-next-index="<?php echo esc_attr( count( $packagings ) ); ?>">
+			<?php $rows = $has_custom_packagings ? $packagings : array(); ?>
+			<?php foreach ( $rows as $i => $row ) : ?>
+				<p class="form-field wbpp-packaging-row" data-index="<?php echo esc_attr( $i ); ?>">
+					<input type="text" class="short" name="_wbpp_packagings[<?php echo esc_attr( $i ); ?>][label]"
+						value="<?php echo esc_attr( $row['label'] ); ?>" placeholder="<?php esc_attr_e( 'Label (e.g. Hardbox)', 'weight-based-product-packs' ); ?>" />
+					<input type="text" class="short wc_input_price" name="_wbpp_packagings[<?php echo esc_attr( $i ); ?>][cost]"
+						value="<?php echo esc_attr( $row['cost'] ); ?>" placeholder="<?php esc_attr_e( 'Cost', 'weight-based-product-packs' ); ?>" />
+					<input type="number" min="0" step="10" class="short" name="_wbpp_packagings[<?php echo esc_attr( $i ); ?>][capacity_g]"
+						value="<?php echo esc_attr( $row['capacity_g'] ); ?>" placeholder="<?php esc_attr_e( 'Capacity (grams)', 'weight-based-product-packs' ); ?>" />
+					<button type="button" class="button wbpp-packaging-remove">&times;</button>
+				</p>
+			<?php endforeach; ?>
+		</div>
+		<p class="form-field">
+			<button type="button" class="button wbpp-packaging-add"><?php esc_html_e( 'Add packaging', 'weight-based-product-packs' ); ?></button>
+			<template class="wbpp-packaging-template">
+				<p class="form-field wbpp-packaging-row" data-index="{i}">
+					<input type="text" class="short" name="_wbpp_packagings[{i}][label]" value="" placeholder="<?php esc_attr_e( 'Label (e.g. Hardbox)', 'weight-based-product-packs' ); ?>" />
+					<input type="text" class="short wc_input_price" name="_wbpp_packagings[{i}][cost]" value="" placeholder="<?php esc_attr_e( 'Cost', 'weight-based-product-packs' ); ?>" />
+					<input type="number" min="0" step="10" class="short" name="_wbpp_packagings[{i}][capacity_g]" value="" placeholder="<?php esc_attr_e( 'Capacity (grams)', 'weight-based-product-packs' ); ?>" />
+					<button type="button" class="button wbpp-packaging-remove">&times;</button>
+				</p>
+			</template>
+		</p>
+	</div>
+
 	<div class="options_group">
 		<p class="form-field">
 			<span class="description">
@@ -66,3 +100,27 @@ defined( 'ABSPATH' ) || exit;
 		</p>
 	</div>
 </div>
+
+<script>
+(function () {
+	'use strict';
+	var wrap = document.querySelector('#wbpp_pack_data .wbpp-packagings');
+	var tpl  = document.querySelector('#wbpp_pack_data .wbpp-packaging-template');
+	var add  = document.querySelector('#wbpp_pack_data .wbpp-packaging-add');
+	if (!wrap || !tpl || !add) { return; }
+
+	add.addEventListener('click', function () {
+		var next = parseInt(wrap.getAttribute('data-next-index'), 10) || 0;
+		var html = tpl.innerHTML.replace(/\{i\}/g, String(next));
+		wrap.insertAdjacentHTML('beforeend', html);
+		wrap.setAttribute('data-next-index', String(next + 1));
+	});
+
+	wrap.addEventListener('click', function (e) {
+		var btn = e.target.closest('.wbpp-packaging-remove');
+		if (btn) {
+			btn.closest('.wbpp-packaging-row').remove();
+		}
+	});
+})();
+</script>
