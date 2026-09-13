@@ -30,6 +30,16 @@ class WBPP_Product_Pack extends WC_Product_Simple {
 	}
 
 	/**
+	 * Optional mixing step in grams (0 = disabled = default bundle behavior).
+	 *
+	 * When set, customers add each item in `step`-gram increments instead of
+	 * whole bundles; bundle prices are prorated per gram.
+	 */
+	public function get_step_g( $context = 'view' ) {
+		return (int) $this->get_meta( '_wbpp_step_g', true, $context );
+	}
+
+	/**
 	 * Term ID of the product category bundles are sourced from.
 	 */
 	public function get_source_cat( $context = 'view' ) {

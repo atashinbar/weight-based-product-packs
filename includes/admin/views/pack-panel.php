@@ -24,6 +24,13 @@ defined( 'ABSPATH' ) || exit;
 		</p>
 
 		<p class="form-field">
+			<label for="_wbpp_step_g"><?php esc_html_e( 'Mixing step in grams (optional)', 'weight-based-product-packs' ); ?></label>
+			<input type="number" min="0" step="10" name="_wbpp_step_g" id="_wbpp_step_g"
+				value="<?php echo esc_attr( $step ); ?>" placeholder="<?php echo esc_attr( '0' ); ?>" />
+			<?php echo wc_help_tip( esc_html__( 'E.g. 250 lets customers add each item in 250 g increments instead of whole bundles, with bundle prices prorated per gram. Must divide the pack capacity exactly. Leave empty or 0 for default bundle behavior.', 'weight-based-product-packs' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		</p>
+
+		<p class="form-field">
 			<label for="_wbpp_source_cat"><?php esc_html_e( 'Allowed items category', 'weight-based-product-packs' ); ?></label>
 			<?php
 			wp_dropdown_categories(

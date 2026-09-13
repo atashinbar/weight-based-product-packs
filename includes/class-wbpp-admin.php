@@ -49,6 +49,7 @@ class WBPP_Admin {
 
 		$capacity = $product ? $product->get_meta( '_wbpp_capacity_g', true ) : '';
 		$box_cost = $product ? $product->get_meta( '_wbpp_box_cost', true ) : '';
+		$step     = $product ? $product->get_meta( '_wbpp_step_g', true ) : '';
 		$cat      = $product ? (int) $product->get_meta( '_wbpp_source_cat', true ) : 0;
 		$excluded = $product ? (string) $product->get_meta( '_wbpp_exclude_ids', true ) : '';
 
@@ -76,11 +77,13 @@ class WBPP_Admin {
 
 		$capacity = isset( $_POST['_wbpp_capacity_g'] ) ? absint( $_POST['_wbpp_capacity_g'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$box_cost = isset( $_POST['_wbpp_box_cost'] ) ? wc_format_decimal( sanitize_text_field( wp_unslash( $_POST['_wbpp_box_cost'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$step     = isset( $_POST['_wbpp_step_g'] ) ? absint( $_POST['_wbpp_step_g'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$cat      = isset( $_POST['_wbpp_source_cat'] ) ? absint( $_POST['_wbpp_source_cat'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$excluded = isset( $_POST['_wbpp_exclude_ids'] ) ? sanitize_text_field( wp_unslash( $_POST['_wbpp_exclude_ids'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		$product->update_meta_data( '_wbpp_capacity_g', $capacity );
 		$product->update_meta_data( '_wbpp_box_cost', $box_cost );
+		$product->update_meta_data( '_wbpp_step_g', $step );
 		$product->update_meta_data( '_wbpp_source_cat', $cat );
 		$product->update_meta_data( '_wbpp_exclude_ids', $excluded );
 

@@ -30,6 +30,7 @@
 	wbppData.packId = parseInt(wbppData.packId, 10) || 0;
 	wbppData.priceDecimals = parseInt(wbppData.priceDecimals, 10) || 0;
 	wbppData.boxCost = parseFloat(wbppData.boxCost) || 0;
+	wbppData.step = parseInt(wbppData.step, 10) || 0;
 
 	var counts = {};
 	var pending = false;
@@ -86,6 +87,27 @@
 		return counts[id] || 0;
 	}
 
+	// One "unit" of an item = the mixing step when enabled, otherwise the bundle weight.
+	function unitWeight(it) {
+		return wbppData.step > 0 ? wbppData.step : it.weight;
+	}
+
+	// Consumed bundle units for `qty` units of an item (fractional in step mode).
+	function consumedUnits(it, qty) {
+		return wbppData.step > 0 ? (qty * wbppData.step) / it.weight : qty;
+	}
+
+	function weightOf(it, qty) {
+		return unitWeight(it) * qty;
+	}
+
+	function priceOf(it, qty) {
+		if (wbppData.step > 0) {
+			return it.price * (wbppData.step / it.weight) * qty; // prorated per gram
+		}
+		return it.price * qty;
+	}
+
 	function totals() {
 		var grams = 0;
 		var price = parseFloat(wbppData.boxCost) || 0;
@@ -94,8 +116,8 @@
 			if (!c) { return; }
 			var it = items[id];
 			if (!it) { return; }
-			grams += it.weight * c;
-			price += it.price * c;
+			grams += weightOf(it, c);
+			price += priceOf(it, c);
 		});
 		return { grams: grams, price: price };
 	}
@@ -120,12 +142,12 @@
 			minus.disabled = c <= 0;
 			var plusBlocked = false;
 			if (it) {
-				// Capacity cap: adding one more must not exceed the capacity.
-				if (t.grams + it.weight > capacity) {
+				// Capacity cap: adding one more unit must not exceed the capacity.
+				if (t.grams + unitWeight(it) > capacity) {
 					plusBlocked = true;
 				}
-				// Stock cap.
-				if (it.stock !== null && c >= it.stock) {
+				// Stock cap: consumed bundle units (fractional in step mode).
+				if (it.stock !== null && consumedUnits(it, c + 1) > it.stock) {
 					plusBlocked = true;
 				}
 			}
@@ -140,7 +162,7 @@
 				var id = row.getAttribute('data-id');
 				var it = items[id];
 				if (it) {
-					groupGrams += it.weight * totalCount(id);
+					groupGrams += weightOf(it, totalCount(id));
 				}
 			});
 			var elTotal = group.querySelector('.wbpp-group-total');
@@ -219,9 +241,9 @@
 			var id1 = row1.getAttribute('data-id');
 			var it1 = items[id1];
 			var t1 = totals();
-			if (it1 && t1.grams + it1.weight <= wbppData.capacity) {
+			if (it1 && t1.grams + unitWeight(it1) <= wbppData.capacity) {
 				var nextCount = totalCount(id1) + 1;
-				if (it1.stock === null || nextCount <= it1.stock) {
+				if (it1.stock === null || consumedUnits(it1, nextCount) <= it1.stock) {
 					counts[id1] = nextCount;
 					lastError = '';
 				}

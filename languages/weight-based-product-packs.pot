@@ -154,6 +154,20 @@ msgstr ""
 msgid "No items are currently available for this pack."
 msgstr ""
 
+#: includes/admin/views/pack-panel.php
+msgid "Mixing step in grams (optional)"
+msgstr ""
+
+msgid "E.g. 250 lets customers add each item in 250 g increments instead of whole bundles, with bundle prices prorated per gram. Must divide the pack capacity exactly. Leave empty or 0 for default bundle behavior."
+msgstr ""
+
+#: includes/class-wbpp-items.php
+msgid "The mixing step (%s g) must divide the pack capacity exactly."
+msgstr ""
+
+msgid "The mixing step must be smaller than the pack capacity."
+msgstr ""
+
 msgid "Pack size"
 msgstr ""
 

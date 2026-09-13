@@ -156,6 +156,20 @@ msgstr "ساخت پک"
 msgid "No items are currently available for this pack."
 msgstr "در حال حاضر قلم قابل انتخابی برای این پک وجود ندارد."
 
+#: includes/admin/views/pack-panel.php
+msgid "Mixing step in grams (optional)"
+msgstr "گام ترکیب بر حسب گرم (اختیاری)"
+
+msgid "E.g. 250 lets customers add each item in 250 g increments instead of whole bundles, with bundle prices prorated per gram. Must divide the pack capacity exactly. Leave empty or 0 for default bundle behavior."
+msgstr "مثلاً عدد 250 به مشتری اجازه می‌دهد هر قلم را به‌جای بسته کامل، با گام ۲۵۰ گرمی اضافه کند و قیمت بسته‌ها به‌ازای هر گرم سرِساله محاسبه می‌شود. این عدد باید ظرفیت پک را دقیقاً بخش‌پذیر کند. برای رفتار پیش‌فرض (بسته کامل) خالی یا 0 بگذارید."
+
+#: includes/class-wbpp-items.php
+msgid "The mixing step (%s g) must divide the pack capacity exactly."
+msgstr "گام ترکیب (%s گرم) باید ظرفیت پک را دقیقاً بخش‌پذیر کند."
+
+msgid "The mixing step must be smaller than the pack capacity."
+msgstr "گام ترکیب باید از ظرفیت پک کمتر باشد."
+
 msgid "Pack size"
 msgstr "سایز پک"
 

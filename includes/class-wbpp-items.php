@@ -258,7 +258,23 @@ class WBPP_Items {
 			$problems[] = __( 'No valid weight bundles were found in the selected category. Every item needs a weight and stock.', 'weight-based-product-packs' );
 		}
 
-		if ( $pack->get_capacity_g() > 0 && ! empty( $bundles ) ) {
+		// Mixing step (when enabled) must divide the capacity exactly and be smaller than it.
+		$step = $pack->get_step_g();
+		if ( $step > 0 ) {
+			$capacity = $pack->get_capacity_g();
+			if ( $capacity > 0 && 0 !== $capacity % $step ) {
+				$problems[] = sprintf(
+					/* translators: %s: mixing step in grams */
+					__( 'The mixing step (%s g) must divide the pack capacity exactly.', 'weight-based-product-packs' ),
+					number_format_i18n( $step )
+				);
+			}
+			if ( $capacity > 0 && $step >= $capacity ) {
+				$problems[] = __( 'The mixing step must be smaller than the pack capacity.', 'weight-based-product-packs' );
+			}
+		}
+
+		if ( $pack->get_capacity_g() > 0 && ! empty( $bundles ) && 0 === $step ) {
 			$capacity  = $pack->get_capacity_g();
 			$reachable = self::capacity_reachable( $capacity, $bundles );
 			if ( ! $reachable ) {

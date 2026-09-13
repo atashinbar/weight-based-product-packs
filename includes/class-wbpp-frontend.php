@@ -60,6 +60,7 @@ class WBPP_Frontend {
 			'packId'         => (int) $product->get_id(),
 			'capacity'       => (int) $product->get_capacity_g(),
 			'boxCost'        => (float) $product->get_box_cost(),
+			'step'           => (int) $product->get_step_g(),
 			'items'          => $items,
 			'locale'         => str_replace( '_', '-', get_locale() ),
 			'currencySymbol' => html_entity_decode( wp_strip_all_tags( get_woocommerce_currency_symbol() ), ENT_QUOTES, 'UTF-8' ),

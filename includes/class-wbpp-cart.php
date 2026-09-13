@@ -63,6 +63,7 @@ class WBPP_Cart {
 
 		// Only bundles allowed for this pack are accepted; prices and weights are always read from the server.
 		$allowed = WBPP_Items::get_for_pack( $pack );
+		$step    = $pack->get_step_g();
 
 		$contents = array();
 		$total_g  = 0;
@@ -76,7 +77,12 @@ class WBPP_Cart {
 				'id'  => $id,
 				'qty' => $qty,
 			);
-			$total_g        += (int) $allowed[ $id ]['weight_g'] * $qty;
+			if ( $step > 0 ) {
+				// Step mode: each unit is `step` grams of the item, independent of the bundle weight.
+				$total_g += $step * $qty;
+			} else {
+				$total_g += (int) $allowed[ $id ]['weight_g'] * $qty;
+			}
 		}
 
 		if ( empty( $contents ) ) {
@@ -103,9 +109,12 @@ class WBPP_Cart {
 		}
 
 		// Stock check (including other items already in the cart).
+		// Units are consumed bundles; in step mode a unit is prorated (qty × step / bundle weight, fractional allowed).
 		$required = array();
 		foreach ( $contents as $id => $row ) {
-			$required[ $id ] = $row['qty'];
+			$required[ $id ] = ( $step > 0 )
+				? $row['qty'] * $step / max( 1, (int) $allowed[ $id ]['weight_g'] )
+				: $row['qty'];
 		}
 		$required = self::accumulate_cart_quantities( $required );
 		foreach ( $required as $id => $need ) {
@@ -140,6 +149,7 @@ class WBPP_Cart {
 			array(
 				'wbpp_contents' => $contents,
 				'wbpp_capacity' => $capacity,
+				'wbpp_step'     => $step,
 			)
 		);
 		self::$adding_via_builder = false;
@@ -178,6 +188,9 @@ class WBPP_Cart {
 	/**
 	 * Pack price = sum(current bundle price x qty) + box cost.
 	 *
+	 * With a mixing step active, each unit is `step` grams and the bundle price
+	 * is prorated per gram: price × (step / bundle weight) × qty.
+	 *
 	 * @param WC_Product $pack_product
 	 * @param array      $contents
 	 * @return float|null Null when contents are invalid.
@@ -186,6 +199,8 @@ class WBPP_Cart {
 		if ( ! is_array( $contents ) ) {
 			return null;
 		}
+		$step = ( $pack_product instanceof WBPP_Product_Pack ) ? $pack_product->get_step_g() : 0;
+
 		$sum = 0.0;
 		foreach ( $contents as $row ) {
 			$item = wc_get_product( isset( $row['id'] ) ? (int) $row['id'] : 0 );
@@ -193,7 +208,12 @@ class WBPP_Cart {
 				return null;
 			}
 			$qty = max( 1, isset( $row['qty'] ) ? (int) $row['qty'] : 1 );
-			$sum += (float) $item->get_price() * $qty;
+			if ( $step > 0 ) {
+				$weight_g = max( 1, WBPP_Items::to_grams( $item->get_weight() ) );
+				$sum     += (float) $item->get_price() * ( $step / $weight_g ) * $qty;
+			} else {
+				$sum += (float) $item->get_price() * $qty;
+			}
 		}
 		if ( $pack_product instanceof WBPP_Product_Pack ) {
 			$sum += $pack_product->get_box_cost();
@@ -256,8 +276,10 @@ class WBPP_Cart {
 			return $item_data;
 		}
 
-		$bundles = WBPP_Items::get_for_pack( $cart_item['product_id'] );
-		$total_g = 0;
+		$bundles  = WBPP_Items::get_for_pack( $cart_item['product_id'] );
+		$pack     = wc_get_product( $cart_item['product_id'] );
+		$step     = ( $pack && 'pack' === $pack->get_type() ) ? $pack->get_step_g() : 0;
+		$total_g  = 0;
 
 		foreach ( $cart_item['wbpp_contents'] as $row ) {
 			$id = isset( $row['id'] ) ? (int) $row['id'] : 0;
@@ -265,17 +287,33 @@ class WBPP_Cart {
 			if ( ! $b ) {
 				continue;
 			}
-			$qty      = (int) $row['qty'];
-			$total_g += $b['weight_g'] * $qty;
-			$item_data[] = array(
-				'key'   => $b['name'],
-				'value' => sprintf(
-					'%1$s × %2$s (%3$s)',
-					number_format_i18n( $qty ),
-					WBPP_Items::weight_label( $b['weight_g'] ),
-					WBPP_Items::weight_label( $b['weight_g'] * $qty )
-				),
-			);
+			$qty = (int) $row['qty'];
+
+			if ( $step > 0 ) {
+				// Step mode: each unit is `step` grams of the item.
+				$row_g      = $step * $qty;
+				$total_g   += $row_g;
+				$item_data[] = array(
+					'key'   => $b['name'],
+					'value' => sprintf(
+						'%1$s × %2$s (%3$s)',
+						number_format_i18n( $qty ),
+						WBPP_Items::weight_label( $step ),
+						WBPP_Items::weight_label( $row_g )
+					),
+				);
+			} else {
+				$total_g += $b['weight_g'] * $qty;
+				$item_data[] = array(
+					'key'   => $b['name'],
+					'value' => sprintf(
+						'%1$s × %2$s (%3$s)',
+						number_format_i18n( $qty ),
+						WBPP_Items::weight_label( $b['weight_g'] ),
+						WBPP_Items::weight_label( $b['weight_g'] * $qty )
+					),
+				);
+			}
 		}
 
 		$item_data[] = array(
@@ -315,6 +353,7 @@ class WBPP_Cart {
 
 			if ( ! empty( $cart_item['wbpp_contents'] ) && is_array( $cart_item['wbpp_contents'] ) ) {
 				$pack     = wc_get_product( $cart_item['product_id'] );
+				$step     = ( $pack && 'pack' === $pack->get_type() ) ? $pack->get_step_g() : 0;
 				$capacity = ! empty( $cart_item['wbpp_capacity'] )
 					? (int) $cart_item['wbpp_capacity']
 					: ( $pack ? $pack->get_capacity_g() : 0 );
@@ -326,8 +365,17 @@ class WBPP_Cart {
 						continue;
 					}
 					$qty      = (int) $row['qty'];
-					$total_g += WBPP_Items::to_grams( $item->get_weight() ) * $qty;
-					$required[ $item->get_id() ] = ( isset( $required[ $item->get_id() ] ) ? $required[ $item->get_id() ] : 0 ) + $qty * (int) $cart_item['quantity'];
+					$weight_g = WBPP_Items::to_grams( $item->get_weight() );
+
+					if ( $step > 0 ) {
+						// Step mode: each unit is `step` grams; consumed bundles are prorated (fractional).
+						$total_g += $step * $qty;
+						$units   = $qty * $step / max( 1, $weight_g );
+					} else {
+						$total_g += $weight_g * $qty;
+						$units   = $qty;
+					}
+					$required[ $item->get_id() ] = ( isset( $required[ $item->get_id() ] ) ? $required[ $item->get_id() ] : 0 ) + $units * (int) $cart_item['quantity'];
 				}
 
 				if ( $total_g !== $capacity ) {
@@ -377,12 +425,22 @@ class WBPP_Cart {
 
 		foreach ( WC()->cart->get_cart() as $cart_item ) {
 			if ( ! empty( $cart_item['wbpp_contents'] ) && is_array( $cart_item['wbpp_contents'] ) ) {
+				$pack = wc_get_product( $cart_item['product_id'] );
+				$step = ( $pack && 'pack' === $pack->get_type() ) ? $pack->get_step_g() : 0;
+
 				foreach ( $cart_item['wbpp_contents'] as $row ) {
 					$id = isset( $row['id'] ) ? (int) $row['id'] : 0;
 					if ( ! $id ) {
 						continue;
 					}
-					$required[ $id ] = ( isset( $required[ $id ] ) ? $required[ $id ] : 0 ) + (int) $row['qty'] * (int) $cart_item['quantity'];
+					if ( $step > 0 ) {
+						$item    = wc_get_product( $id );
+						$weight  = $item ? max( 1, WBPP_Items::to_grams( $item->get_weight() ) ) : 1;
+						$units   = (int) $row['qty'] * $step / $weight;
+					} else {
+						$units   = (int) $row['qty'];
+					}
+					$required[ $id ] = ( isset( $required[ $id ] ) ? $required[ $id ] : 0 ) + $units * (int) $cart_item['quantity'];
 				}
 			} else {
 				$pid = ! empty( $cart_item['variation_id'] ) ? (int) $cart_item['variation_id'] : (int) $cart_item['product_id'];
